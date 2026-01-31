@@ -26,7 +26,9 @@
                             <td>Rp{{ number_format($food->harga) }}</td>
                             <td>{{ $food->stok }}</td>
                             <td>
-                                <a href="{{ route('foods.edit', $food->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="{{ route('foods.edit', $food->id) }}" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
                                 <form action="{{ route('foods.destroy', $food->id) }}" method="POST" class="d-inline">
                                     @csrf @method('DELETE')
                                     <button class="btn btn-sm btn-danger" onclick="return confirm('Hapus?')">Hapus</button>

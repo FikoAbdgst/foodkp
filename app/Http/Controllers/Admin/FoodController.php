@@ -60,22 +60,17 @@ class FoodController extends Controller
             'nama_makanan' => 'required',
             'harga' => 'required|numeric',
             'stok' => 'required|integer',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
+
+        $data = $request->all();
 
         if ($request->hasFile('image')) {
-            // Hapus gambar lama jika ada
-            if ($food->image) {
-                Storage::disk('public')->delete($food->image);
-            }
-            $food->image = $request->file('image')->store('foods', 'public');
+            // Logika hapus gambar lama bisa ditambahkan di sini
+            $data['image'] = $request->file('image')->store('foods', 'public');
         }
 
-        $food->update([
-            'nama_makanan' => $request->nama_makanan,
-            'harga' => $request->harga,
-            'stok' => $request->stok,
-            'image' => $food->image
-        ]);
+        $food->update($data);
 
         return redirect()->route('foods.index')->with('success', 'Data berhasil diperbarui!');
     }

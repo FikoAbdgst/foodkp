@@ -1,87 +1,81 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Admin Panel - FoodMarket</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/css/app.css'])
+</head>
+
+<head>
     <style>
-        body {
-            overflow-x: hidden;
+        .wrapper {
+            display: flex;
+            width: 100%;
+            align-items: stretch;
         }
 
-        #sidebar-wrapper {
+        #sidebar {
+            min-width: 250px;
+            max-width: 250px;
             min-height: 100vh;
-            width: 250px;
-            transition: all 0.25s ease;
+            transition: all 0.3s;
         }
 
-        .sidebar-heading {
-            padding: 0.875rem 1.25rem;
-            font-size: 1.2rem;
-        }
-
-        .list-group-item {
-            border: none;
-            padding: 20px 30px;
-        }
-
-        .list-group-item.active {
-            background-color: #ff4757;
+        .content-area {
+            width: 100%;
         }
     </style>
 </head>
 
 <body>
-    <div class="d-flex" id="wrapper">
+    <div id="app">
         @auth
-            <div class="bg-dark text-white" id="sidebar-wrapper">
-                <div class="sidebar-heading fw-bold border-bottom border-secondary">🍔 Admin Food</div>
-                <div class="list-group list-group-flush">
-                    <a href="{{ route('home') }}"
-                        class="list-group-item list-group-item-action bg-dark text-white {{ request()->is('home') ? 'active' : '' }}">
-                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
-                    </a>
-                    <a href="{{ route('foods.index') }}"
-                        class="list-group-item list-group-item-action bg-dark text-white {{ request()->is('admin/foods*') ? 'active' : '' }}">
-                        <i class="bi bi-egg-fried me-2"></i> Kelola Makanan
-                    </a>
-                    <a href="/"
-                        class="list-group-item list-group-item-action bg-dark text-white border-top border-secondary">
-                        <i class="bi bi-shop me-2"></i> Lihat Toko
-                    </a>
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button type="submit"
-                            class="list-group-item list-group-item-action bg-dark text-danger w-100 text-start">
-                            <i class="bi bi-box-arrow-left me-2"></i> Logout
-                        </button>
-                    </form>
-                </div>
-            </div>
-        @endauth
-
-        <div id="page-content-wrapper" class="w-100">
-            <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-4">
-                <div class="container-fluid">
-                    <a class="navbar-brand d-lg-none" href="/">🍔 FoodMarket</a>
-                    <div class="ms-auto">
-                        @auth
-                            <span class="navbar-text me-3">Halo, <strong>{{ Auth::user()->name }}</strong></span>
-                        @else
-                            <a href="{{ route('login') }}" class="btn btn-outline-primary btn-sm">Login Admin</a>
-                        @endauth
+            @if (Auth::user()->role == 'admin')
+                <div class="wrapper">
+                    <nav id="sidebar" class="bg-dark text-white p-3">
+                        <h3 class="text-center mb-4">FoodKP Admin</h3>
+                        <ul class="nav flex-column">
+                            <li class="nav-item mb-2">
+                                <a href="{{ route('dashboard') }}"
+                                    class="nav-link text-white {{ request()->is('home') ? 'active bg-primary' : '' }}">
+                                    <i class="bi bi-speedometer2"></i> Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item mb-2">
+                                <a href="{{ route('foods.index') }}"
+                                    class="nav-link text-white {{ request()->is('admin/foods*') ? 'active bg-primary' : '' }}">
+                                    <i class="bi bi-egg-fried"></i> Kelola Makanan
+                                </a>
+                            </li>
+                            <hr>
+                            <li class="nav-item">
+                                <a class="nav-link text-danger" href="{{ route('logout') }}"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div class="content-area p-4">
+                        @yield('content')
                     </div>
                 </div>
-            </nav>
-
-            <div class="container-fluid p-4">
+            @else
+                @include('layouts.partials.navbar')
+                <main class="py-4">
+                    <div class="container">@yield('content')</div>
+                </main>
+            @endif
+        @else
+            @include('layouts.partials.navbar')
+            <main>
                 @yield('content')
-            </div>
-        </div>
+            </main>
+        @endauth
     </div>
+
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
 </body>
 
 </html>
