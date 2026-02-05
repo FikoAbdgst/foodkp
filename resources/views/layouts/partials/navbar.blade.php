@@ -63,7 +63,7 @@
 
                     <li class="nav-item dropdown">
                         <a id="navbarDropdown" class="nav-link dropdown-toggle user-dropdown" href="#" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                            data-bs-toggle="dropdown">
                             <div class="user-avatar">
                                 <i class="bi bi-person-circle"></i>
                             </div>

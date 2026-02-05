@@ -73,10 +73,8 @@
                                     </span>
                                 </div>
                                 <div class="menu-card-overlay">
-                                    <button class="btn-quick-view" data-bs-toggle="modal"
-                                        data-bs-target="#detailModal{{ $food->id }}" data-bs-placement="top"
-                                        title="Lihat Detail">
-                                        <i class="bi bi-eye-fill"></i>
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#modalDetailId">
+                                        Lihat Detail
                                     </button>
                                 </div>
                                 <div class="menu-card-status">

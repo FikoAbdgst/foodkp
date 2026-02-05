@@ -211,16 +211,7 @@
                             <div class="menu-card-body">
                                 <h5 class="menu-card-title">{{ $food->nama_makanan }}</h5>
 
-                                <div class="menu-card-rating">
-                                    <div class="rating-stars-user">
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                    </div>
-                                    <span class="rating-text">5.0</span>
-                                </div>
+
 
                                 <div class="menu-card-price-row">
                                     <div class="price-wrapper">
@@ -229,110 +220,51 @@
                                     </div>
                                 </div>
 
-                                <form action="{{ route('cart.add', $food->id) }}" method="POST" class="mt-3">
-                                    @csrf
-                                    <button type="submit" class="btn-add-to-cart">
-                                        <i class="bi bi-cart-plus me-2"></i>
-                                        Tambah ke Keranjang
-                                    </button>
-                                </form>
+                                <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal"
+                                    data-bs-target="#detailModal{{ $food->id }}">
+                                    Detail
+                                </button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Modal Detail -->
-                    <div class="modal fade" id="detailModal{{ $food->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-lg">
-                            <div class="modal-content modal-custom">
-                                <div class="modal-header border-0">
-                                    <h5 class="modal-title fw-bold">
-                                        <i class="bi bi-info-circle-fill text-primary me-2"></i>
-                                        Detail Menu
-                                    </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <div class="modal fade" id="detailModal{{ $food->id }}" tabindex="-1"
+                        aria-labelledby="detailModalLabel{{ $food->id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="detailModalLabel{{ $food->id }}">
+                                        {{ $food->nama_makanan }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="row g-4">
-                                        <div class="col-md-6">
-                                            <div class="modal-image-wrapper">
-                                                <img src="{{ asset('storage/' . $food->image) }}"
-                                                    alt="{{ $food->nama_makanan }}" class="modal-image">
-                                                <div class="modal-badge-wrapper">
-                                                    <span class="badge bg-success">
-                                                        <i class="bi bi-check-circle-fill me-1"></i>
-                                                        Tersedia
-                                                    </span>
-                                                    <span class="badge bg-warning text-dark">
-                                                        <i class="bi bi-star-fill me-1"></i>
-                                                        Populer
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="modal-info">
-                                                <h3 class="modal-product-title">{{ $food->nama_makanan }}</h3>
-
-                                                <div class="modal-rating mb-3">
-                                                    <div class="rating-stars-modal">
-                                                        <i class="bi bi-star-fill"></i>
-                                                        <i class="bi bi-star-fill"></i>
-                                                        <i class="bi bi-star-fill"></i>
-                                                        <i class="bi bi-star-fill"></i>
-                                                        <i class="bi bi-star-fill"></i>
-                                                    </div>
-                                                    <span class="rating-count">(5.0 / 127 ulasan)</span>
-                                                </div>
-
-                                                <div class="modal-price mb-4">
-                                                    <span class="price-tag">Harga</span>
-                                                    <h2 class="price-amount">Rp
-                                                        {{ number_format($food->harga, 0, ',', '.') }}</h2>
-                                                </div>
-
-                                                <div class="modal-description mb-4">
-                                                    <h6 class="fw-bold mb-2">
-                                                        <i class="bi bi-card-text text-primary me-2"></i>
-                                                        Deskripsi
-                                                    </h6>
-                                                    <p class="text-muted">
-                                                        Nikmati kelezatan {{ $food->nama_makanan }} dengan cita rasa yang
-                                                        khas dan bahan-bahan berkualitas terbaik. Cocok untuk dinikmati
-                                                        kapan saja!
-                                                    </p>
-                                                </div>
-
-                                                <div class="modal-features mb-4">
-                                                    <h6 class="fw-bold mb-3">
-                                                        <i class="bi bi-patch-check text-primary me-2"></i>
-                                                        Keunggulan
-                                                    </h6>
-                                                    <ul class="features-list">
-                                                        <li><i class="bi bi-check-circle-fill text-success"></i> Bahan
-                                                            segar & berkualitas</li>
-                                                        <li><i class="bi bi-check-circle-fill text-success"></i> Higienis &
-                                                            halal</li>
-                                                        <li><i class="bi bi-check-circle-fill text-success"></i> Siap dalam
-                                                            30 menit</li>
-                                                        <li><i class="bi bi-check-circle-fill text-success"></i> Packaging
-                                                            aman</li>
-                                                    </ul>
-                                                </div>
-
-                                                <form action="{{ route('cart.add', $food->id) }}" method="POST">
-                                                    @csrf
-                                                    <button type="submit" class="btn-add-modal">
-                                                        <i class="bi bi-cart-plus me-2"></i>
-                                                        Tambah ke Keranjang
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
+                                    <div class="text-center mb-3">
+                                        <img src="{{ asset('storage/' . $food->gambar) }}" class="img-fluid rounded"
+                                            alt="{{ $food->nama_makanan }}" style="max-height: 300px;">
                                     </div>
+                                    <h5>Harga: <span class="text-success">Rp
+                                            {{ number_format($food->harga, 0, ',', '.') }}</span></h5>
+                                    <p><strong>Stok:</strong> {{ $food->stok }}</p>
+                                    <p><strong>Deskripsi:</strong></p>
+                                    <p>{{ $food->deskripsi ?? 'Tidak ada deskripsi.' }}</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Tutup</button>
+                                    <form action="{{ route('cart.add', $food->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn btn-primary"
+                                            {{ $food->stok < 1 ? 'disabled' : '' }}>
+                                            {{ $food->stok < 1 ? 'Habis' : 'Tambah ke Keranjang' }}
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 @empty
                     <div class="col-12">
                         <div class="empty-menu-state" data-aos="fade-up">
@@ -406,7 +338,7 @@
         </div>
     </section>
 
-    <!-- Testimonials Section -->
+    {{-- <!-- Testimonials Section -->
     <section class="testimonials-section">
         <div class="container">
             <div class="text-center mb-5" data-aos="fade-up">
@@ -485,7 +417,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> --}}
 
     <!-- Footer -->
     <footer class="footer-user-section">
