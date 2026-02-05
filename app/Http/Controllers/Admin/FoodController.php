@@ -83,4 +83,22 @@ class FoodController extends Controller
         $food->delete();
         return redirect()->route('foods.index')->with('success', 'Makanan dihapus!');
     }
+    // app/Http/Controllers/Admin/FoodController.php
+
+    public function stokIndex()
+    {
+        $foods = Food::all();
+        return view('admin.foods.stok', compact('foods'));
+    }
+
+    public function stokUpdate(Request $request, Food $food)
+    {
+        $request->validate([
+            'stok' => 'required|integer|min:0'
+        ]);
+
+        $food->update(['stok' => $request->stok]);
+
+        return back()->with('success', "Stok {$food->nama_makanan} berhasil diperbarui!");
+    }
 }
