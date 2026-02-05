@@ -4,11 +4,16 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\FoodController; // Controller untuk CRUD Admin
 use App\Models\Food;
 
-Route::get('/', function () {
-    $foods = Food::take(4)->get(); // Mengambil rekomendasi makanan
-    return view('welcome', compact('foods'));
-})->name('landing');
 
+Route::get('/', function () {
+    $foods = Food::latest()->take(8)->get();
+    return view('home_guest', compact('foods'));
+})->name('home.guest');
+
+Route::get('/dashboard', function () {
+    $foods = Food::latest()->take(8)->get();
+    return view('home_user', compact('foods'));
+})->middleware('auth')->name('home.user');
 Auth::routes();
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
