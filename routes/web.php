@@ -10,10 +10,13 @@ Route::get('/', function () {
     return view('home_guest', compact('foods'));
 })->name('home.guest');
 
-Route::get('/dashboard', function () {
+// PERBAIKAN: Pisahkan dashboard User dan Admin
+// Route untuk Dashboard User Biasa
+Route::get('/home', function () {
     $foods = Food::latest()->take(8)->get();
     return view('home_user', compact('foods'));
 })->middleware('auth')->name('home.user');
+
 Auth::routes();
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -23,14 +26,12 @@ Route::delete('/remove-from-cart', [CartController::class, 'remove'])->name('car
 Route::get('/checkout-wa', [CartController::class, 'checkout'])->name('cart.checkout');
 
 
-// routes/web.php
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [App\Http\Controllers\Admin\FoodController::class, 'dashboard'])->name('dashboard');
 
+    // Dashboard Admin (Hanya bisa diakses jika role admin)
     Route::middleware(['can:admin-access'])->group(function () {
+        Route::get('/admin/dashboard', [App\Http\Controllers\Admin\FoodController::class, 'dashboard'])->name('dashboard');
         Route::resource('admin/foods', App\Http\Controllers\Admin\FoodController::class);
-
-        // Route tambahan untuk manajemen stok
         Route::get('admin/stok', [App\Http\Controllers\Admin\FoodController::class, 'stokIndex'])->name('stok.index');
         Route::patch('admin/stok/{food}/update', [App\Http\Controllers\Admin\FoodController::class, 'stokUpdate'])->name('stok.update');
     });

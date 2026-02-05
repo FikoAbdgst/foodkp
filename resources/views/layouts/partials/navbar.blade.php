@@ -1,83 +1,70 @@
-<nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm sticky-top">
+<nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
-            <i class="bi bi-basket2-fill text-primary me-2 fs-4"></i>
-            <span class="fw-bold fs-4">Food<span class="text-primary">KP</span></span>
+        <a class="navbar-brand" href="{{ url('/') }}">
+            {{ config('app.name', 'FoodKP') }}
         </a>
-
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mx-auto">
-                @guest
-                    <li class="nav-item">
-                        <a class="nav-link fw-semibold" href="{{ url('/') }}">Beranda</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/') }}#mengapa-kami">Mengapa Kami</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/') }}#rekomendasi">Menu</a>
-                    </li>
-                @else
-                    <li class="nav-item">
-                        <a class="nav-link fw-semibold" href="{{ route('home.user') }}">Beranda</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('home.user') }}#menu-user">Menu</a>
-                    </li>
-                @endguest
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('home.guest') }}">Menu</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('cart.index') }}">
+                        Keranjang
+                        @if (session('cart'))
+                            <span class="badge bg-danger">{{ count(session('cart')) }}</span>
+                        @endif
+                    </a>
+                </li>
             </ul>
 
-            <ul class="navbar-nav ms-auto align-items-center">
+            <ul class="navbar-nav ms-auto">
                 @guest
-                    <li class="nav-item me-2">
-                        <a class="nav-link fw-semibold" href="{{ route('login') }}">
-                            <i class="bi bi-box-arrow-in-right"></i> Masuk
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-primary rounded-pill px-4" href="{{ route('register') }}">
-                            <i class="bi bi-person-plus"></i> Daftar
-                        </a>
-                    </li>
+                    @if (Route::has('login'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                        </li>
+                    @endif
+
+                    @if (Route::has('register'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                        </li>
+                    @endif
                 @else
-                    <li class="nav-item me-3">
-                        <a class="nav-link position-relative" href="{{ route('cart.index') }}">
-                            <i class="bi bi-cart3 fs-5"></i>
-                            @php
-                                $cart = session()->get('cart', []);
-                                $cartCount = array_sum(array_column($cart, 'quantity'));
-                            @endphp
-                            @if ($cartCount > 0)
-                                <span
-                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                    style="font-size: 0.65rem;">
-                                    {{ $cartCount }}
-                                </span>
-                            @endif
-                        </a>
-                    </li>
                     <li class="nav-item dropdown">
-                        <a id="navbarDropdown" class="nav-link dropdown-toggle d-flex align-items-center" href="#"
-                            role="button" data-bs-toggle="dropdown">
-                            <div class="rounded-circle bg-primary bg-opacity-10 p-2 me-2">
-                                <i class="bi bi-person-fill text-primary"></i>
-                            </div>
-                            <span class="fw-semibold">{{ Auth::user()->name }}</span>
+                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                            {{ Auth::user()->name }}
+                            <span class="badge bg-secondary text-uppercase" style="font-size: 0.7rem;">
+                                {{ Auth::user()->role }}
+                            </span>
                         </a>
-                        <div class="dropdown-menu dropdown-menu-end border-0 shadow">
-                            <a class="dropdown-item" href="{{ route('cart.index') }}">
-                                <i class="bi bi-cart3 me-2"></i> Keranjang Saya
+
+                        <div id="myDropdownMenu" class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            {{-- Menu Khusus Admin --}}
+                            @if (Auth::user()->role == 'admin')
+                                <a class="dropdown-item" href="{{ route('dashboard') }}">
+                                    Dashboard Admin
+                                </a>
+                                <a class="dropdown-item" href="{{ route('foods.index') }}">
+                                    Kelola Makanan
+                                </a>
+                                <div class="dropdown-divider"></div>
+                            @endif
+
+                            {{-- Menu Logout --}}
+                            <a class="dropdown-item" href="{{ route('logout') }}"
+                                onclick="event.preventDefault();
+                                             document.getElementById('logout-form').submit();">
+                                {{ __('Logout') }}
                             </a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger" href="{{ route('logout') }}"
-                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                <i class="bi bi-box-arrow-right me-2"></i> Logout
-                            </a>
+
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                 @csrf
                             </form>
@@ -123,6 +110,11 @@
         animation: fadeIn 0.3s;
     }
 
+    /* Menangani tampilan dropdown saat aktif tanpa mengubah desain */
+    .dropdown-menu.show {
+        display: block;
+    }
+
     @keyframes fadeIn {
         from {
             opacity: 0;
@@ -144,3 +136,24 @@
         padding-left: 2rem;
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggle = document.getElementById('navbarDropdown');
+        const menu = document.getElementById('myDropdownMenu');
+
+        if (toggle && menu) {
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                menu.classList.toggle('show');
+            });
+
+            // Menutup dropdown jika klik di luar
+            window.addEventListener('click', function(e) {
+                if (!toggle.contains(e.target) && !menu.contains(e.target)) {
+                    menu.classList.remove('show');
+                }
+            });
+        }
+    });
+</script>
