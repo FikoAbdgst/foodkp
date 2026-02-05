@@ -152,13 +152,14 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead>
                             <tr>
-                                <th width="40%">Nama Makanan</th>
-                                <th width="25%" class="text-center">Stok Saat Ini</th>
-                                <th width="35%">Update Stok</th>
+                                <th width="35%">Nama Makanan</th>
+                                <th width="20%" class="text-center">Sisa Stok</th>
+                                <th width="20%" class="text-center">Total Terjual</th>
+                                <th width="25%">Input Penjualan</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($foods as $food)
+                            @foreach ($foods as $food)
                                 <tr>
                                     <td>
                                         <div class="food-item">
@@ -169,37 +170,25 @@
                                     </td>
                                     <td class="text-center">
                                         <span
-                                            class="current-stock
-                                            @if ($food->stok < 10) stock-badge-low
-                                            @elseif($food->stok < 30) stock-badge-medium
-                                            @else stock-badge-high @endif">
-                                            <i class="bi bi-box me-1"></i>{{ $food->stok }} unit
+                                            class="current-stock {{ $food->stok < 10 ? 'stock-badge-low' : 'stock-badge-high' }}">
+                                            {{ $food->stok }} unit
                                         </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-info text-dark">{{ $food->terjual }} terjual</span>
                                     </td>
                                     <td>
                                         <form action="{{ route('stok.update', $food->id) }}" method="POST"
                                             class="stok-input-group">
                                             @csrf
                                             @method('PATCH')
-                                            <input type="number" name="stok" class="form-control stok-input"
-                                                value="{{ $food->stok }}" min="0" required>
-                                            <button type="submit" class="btn btn-update">
-                                                <i class="bi bi-check-circle me-1"></i>Update
-                                            </button>
+                                            <input type="number" name="jumlah_terjual" class="form-control" placeholder="0"
+                                                min="1" max="{{ $food->stok }}" required>
+                                            <button type="submit" class="btn btn-success">Simpan</button>
                                         </form>
                                     </td>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="3" class="text-center py-5">
-                                        <i class="bi bi-inbox" style="font-size: 4rem; color: #dee2e6;"></i>
-                                        <h5 class="mt-3 text-muted">Belum ada menu yang tersedia</h5>
-                                        <a href="{{ route('foods.create') }}" class="btn btn-primary mt-3">
-                                            <i class="bi bi-plus-circle me-2"></i>Tambah Menu
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforelse
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

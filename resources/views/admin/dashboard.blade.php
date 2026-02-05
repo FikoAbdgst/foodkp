@@ -260,11 +260,10 @@
                 <!-- Menu Preview -->
                 <div class="recent-activity mb-4">
                     <h4 class="section-title">
-                        <i class="bi bi-star me-2"></i>Menu Terpopuler
+                        <i class="bi bi-fire me-2"></i>Menu Paling Laris
                     </h4>
-
                     @php
-                        $topMenus = \App\Models\Food::orderBy('harga', 'desc')->take(5)->get();
+                        $topMenus = \App\Models\Food::orderBy('harga', 'desc')->take(3)->get();
                     @endphp
 
                     @forelse($topMenus as $menu)
@@ -273,17 +272,14 @@
                                 class="menu-preview-img">
                             <div class="menu-preview-info flex-grow-1">
                                 <h6>{{ $menu->nama_makanan }}</h6>
-                                <small>Rp {{ number_format($menu->harga, 0, ',', '.') }}</small>
+                                <small class="text-success">{{ $menu->terjual }} porsi terjual</small>
                             </div>
                             <span class="stock-badge {{ $menu->stok < 10 ? 'stock-low' : 'stock-ok' }}">
-                                Stok: {{ $menu->stok }}
+                                Sisa: {{ $menu->stok }}
                             </span>
                         </div>
                     @empty
-                        <div class="text-center text-muted py-4">
-                            <i class="bi bi-inbox" style="font-size: 3rem;"></i>
-                            <p class="mt-2 mb-0">Belum ada menu</p>
-                        </div>
+                        <p class="text-center text-muted">Belum ada data penjualan.</p>
                     @endforelse
                 </div>
 

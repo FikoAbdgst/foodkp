@@ -20,9 +20,15 @@ class FoodController extends Controller
     {
         $total_menu = Food::count();
         $total_stok = Food::sum('stok');
-        return view('admin.dashboard', compact('total_menu', 'total_stok'));
-    }
 
+        // Ubah take(5) menjadi take(3) agar sesuai rencana rekomendasi
+        $topMenus = Food::where('terjual', '>', 0)
+            ->orderBy('terjual', 'desc')
+            ->take(3)
+            ->get();
+
+        return view('admin.dashboard', compact('total_menu', 'total_stok', 'topMenus'));
+    }
     public function create()
     {
         return view('admin.foods.create');
@@ -94,11 +100,15 @@ class FoodController extends Controller
     public function stokUpdate(Request $request, Food $food)
     {
         $request->validate([
-            'stok' => 'required|integer|min:0'
+            'jumlah_terjual' => 'required|integer|min:1|max:' . $food->stok
         ]);
 
-        $food->update(['stok' => $request->stok]);
+        // Menggunakan nilai yang ada di database saat ini ditambah input baru
+        $food->update([
+            'stok' => $food->stok - $request->jumlah_terjual,
+            'terjual' => $food->terjual + $request->jumlah_terjual
+        ]);
 
-        return back()->with('success', "Stok {$food->nama_makanan} berhasil diperbarui!");
+        return back()->with('success', "Data penjualan {$food->nama_makanan} berhasil dicatat!");
     }
 }
