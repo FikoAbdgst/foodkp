@@ -14,25 +14,28 @@ class CartController extends Controller
         return view('cart', compact('cart'));
     }
 
-    // Tambah ke keranjang
-    public function addToCart($id)
+
+    public function addToCart(Request $request, $id)
     {
         $food = Food::findOrFail($id);
         $cart = session()->get('cart', []);
 
+        // Ambil quantity dari input, defaultnya 1 jika tidak diisi
+        $quantity = $request->input('quantity', 1);
+
         if (isset($cart[$id])) {
-            $cart[$id]['quantity']++;
+            $cart[$id]['quantity'] += $quantity;
         } else {
             $cart[$id] = [
-                "nama" => $food->nama_makanan,
-                "quantity" => 1,
-                "harga" => $food->harga,
-                "image" => $food->image
+                "name" => $food->nama_makanan,
+                "quantity" => $quantity,
+                "price" => $food->harga,
+                "image" => $food->gambar
             ];
         }
 
         session()->put('cart', $cart);
-        return redirect()->back()->with('success', 'Makanan berhasil ditambah!');
+        return redirect()->back()->with('success', 'Produk berhasil ditambahkan ke keranjang!');
     }
 
     // Update quantity di keranjang

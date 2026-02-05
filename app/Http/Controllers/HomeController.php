@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Food;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -21,8 +22,11 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+    // app/Http/Controllers/HomeController.php atau controller terkait
     public function index()
     {
-        return view('home');
+        // Mengambil 8 menu yang paling banyak terjual
+        $foods = Food::orderBy('terjual', 'desc')->take(8)->get();
+        return view('home_user', compact('foods'));
     }
 }
