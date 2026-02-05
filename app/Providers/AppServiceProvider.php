@@ -21,9 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // // Mendefinisikan izin 'admin-access'
-        // Gate::define('admin-access', function (User $user) {
-        //     return $user->role === 'admin';
-        // });
+        // Mendefinisikan izin 'admin-access'
+        Gate::define('admin-access', function (User $user) {
+            return $user->role === 'admin';
+        });
     }
 }

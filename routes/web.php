@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\MenuController;
 use App\Http\Controllers\Admin\FoodController; // Controller untuk CRUD Admin
 use App\Models\Food;
 
@@ -10,15 +11,19 @@ Route::get('/', function () {
     return view('home_guest', compact('foods'));
 })->name('home.guest');
 
-// PERBAIKAN: Pisahkan dashboard User dan Admin
-// Route untuk Dashboard User Biasa
 Route::get('/home', function () {
     $foods = Food::latest()->take(8)->get();
     return view('home_user', compact('foods'));
 })->middleware('auth')->name('home.user');
 
+// Menu Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/menu', [MenuController::class, 'index'])->name('menu.all');
+});
+
 Auth::routes();
 
+// Cart Routes
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/add-to-cart/{id}', [CartController::class, 'addToCart'])->name('cart.add');
 Route::patch('/update-cart', [CartController::class, 'update'])->name('cart.update');
@@ -26,9 +31,8 @@ Route::delete('/remove-from-cart', [CartController::class, 'remove'])->name('car
 Route::get('/checkout-wa', [CartController::class, 'checkout'])->name('cart.checkout');
 
 
+// Admin Routes
 Route::middleware(['auth'])->group(function () {
-
-    // Dashboard Admin (Hanya bisa diakses jika role admin)
     Route::middleware(['can:admin-access'])->group(function () {
         Route::get('/admin/dashboard', [App\Http\Controllers\Admin\FoodController::class, 'dashboard'])->name('dashboard');
         Route::resource('admin/foods', App\Http\Controllers\Admin\FoodController::class);
