@@ -35,22 +35,7 @@
                             </a>
                         </div>
 
-                        <div class="user-quick-info mt-5">
-                            <div class="info-item">
-                                <i class="bi bi-clock-history"></i>
-                                <div>
-                                    <strong>Pesanan Terakhir</strong>
-                                    <p class="mb-0">2 hari yang lalu</p>
-                                </div>
-                            </div>
-                            <div class="info-item">
-                                <i class="bi bi-star-fill"></i>
-                                <div>
-                                    <strong>Poin Rewards</strong>
-                                    <p class="mb-0">1,250 poin</p>
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
 
@@ -136,23 +121,7 @@
         </div>
     </section>
 
-    <section class="promo-banner-section" data-aos="zoom-in">
-        <div class="container">
-            <div class="promo-banner">
-                <div class="promo-content">
-                    <div class="promo-badge">
-                        <i class="bi bi-fire me-2"></i>
-                        Promo Spesial
-                    </div>
-                    <h3>Diskon hingga 30% untuk Member Baru!</h3>
-                    <p>Gunakan kode: <strong>NEWMEMBER30</strong></p>
-                </div>
-                <div class="promo-icon">
-                    <i class="bi bi-gift-fill"></i>
-                </div>
-            </div>
-        </div>
-    </section>
+
 
     <section id="menu-user" class="menu-user-section">
         <div class="container">

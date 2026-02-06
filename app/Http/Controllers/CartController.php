@@ -9,21 +9,31 @@ class CartController extends Controller
 {
     public function index()
     {
+        // Ambil session, default array kosong
         $cart = session()->get('cart', []);
+
+        // Gunakan variabel baru untuk menampung cart yang sudah dibersihkan
+        $updatedCart = [];
 
         if (is_array($cart)) {
             foreach ($cart as $id => $item) {
                 $food = Food::find($id);
 
+                // Cek apakah makanannya masih ada di database?
                 if ($food) {
-                    $cart[$id]['stok'] = $food->stok;
-                } else {
-                    // Opsional: Jika menu sudah dihapus dari DB, bisa dihapus dari cart
-                    // unset($cart[$id]);
+                    // Update stok terbaru dari DB
+                    $item['stok'] = $food->stok;
+
+                    // Masukkan ke updatedCart
+                    $updatedCart[$id] = $item;
                 }
+                // Jika $food tidak ditemukan (null), item tersebut TIDAK dimasukkan ke $updatedCart
+                // sehingga otomatis terhapus dari cart.
             }
 
-            session()->put('cart', $cart);
+            // Timpa session cart dengan data yang sudah diverifikasi
+            session()->put('cart', $updatedCart);
+            $cart = $updatedCart;
         }
 
         return view('cart', compact('cart'));
@@ -38,14 +48,18 @@ class CartController extends Controller
             $cart[$id]['quantity'] += $quantity;
         } else {
             $cart[$id] = [
-                "nama_makanan" => $food->nama_makanan, // Kunci ini harus sama dengan di Blade
+                "nama_makanan" => $food->nama_makanan,
                 "quantity" => (int)$quantity,
                 "harga" => $food->harga,
-                "image" => $food->image
+                "image" => $food->image,
+                "stok" => $food->stok // TAMBAHKAN INI agar saat pertama add tidak error di view
             ];
         }
 
         session()->put('cart', $cart);
+        // Explicitly save session (opsional, tapi membantu di beberapa environment)
+        session()->save();
+
         return redirect()->back()->with('success', 'Produk berhasil ditambahkan!');
     }
     // UPDATE: Dibuat untuk merespon AJAX agar realtime
@@ -101,7 +115,7 @@ class CartController extends Controller
         foreach ($cart as $id => $item) {
             $itemHarga = $item['harga'] ?? 0;
             $subtotal = $itemHarga * $item['quantity'];
-            $pesan .= "😋 *" . ($item['nama_makanan'] ?? 'Menu') . "*\n";
+            $pesan .= "*" . ($item['nama_makanan'] ?? 'Menu') . "*\n";
             $pesan .= "   Qty: " . $item['quantity'] . " x Rp" . number_format($itemHarga, 0, ',', '.') . "\n";
             $pesan .= "   Subtotal: Rp" . number_format($subtotal, 0, ',', '.') . "\n\n";
             $total += $subtotal;
@@ -113,7 +127,7 @@ class CartController extends Controller
         // Logika Tambahan Pesan Berdasarkan Tipe Order
         $pesan .= "*INFO PENGIRIMAN:*\n";
         if ($orderType === 'delivery') {
-            $pesan .= "Metode: 🛵 *Delivery Order*\n";
+            $pesan .= "Metode: *Delivery Order*\n";
             $pesan .= "Alamat: " . $alamatLengkap . "\n";
             // Link Google Maps User
             if ($latitude && $longitude) {
@@ -127,7 +141,7 @@ class CartController extends Controller
         }
 
         $url = "https://wa.me/6282263028951?text=" . urlencode($pesan);
-        session()->forget('cart');
+        // session()->forget('cart');
         return redirect()->away($url);
     }
 }

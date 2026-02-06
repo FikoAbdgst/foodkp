@@ -187,7 +187,20 @@
 
                         <!-- Delivery Section -->
                         <div id="deliverySection">
-                            <div class="info-box mb-3">
+                            <div class="alert alert-warning border-0 shadow-sm d-flex align-items-start mb-3"
+                                role="alert">
+                                <i class="bi bi-exclamation-triangle-fill text-warning fs-4 me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="alert-heading fw-bold mb-1">Info Ongkir Delivery</h6>
+                                    <p class="mb-0 small text-dark">
+                                        Pesanan delivery hanya gratis untuk wilayah sekitar toko.
+                                        Jika lokasi Anda berada <strong>di luar jangkauan</strong>, kurir kami akan
+                                        menginfokan
+                                        biaya tambahan melalui WhatsApp.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="alert alert-info small mb-3">
                                 <i class="bi bi-info-circle me-2"></i>
                                 <span>Klik tombol untuk mendeteksi lokasi Anda secara otomatis</span>
                             </div>
@@ -221,7 +234,8 @@
                                     </div>
                                     <h6>Lokasi Outlet Kami</h6>
                                     <p class="outlet-address">Jl. Contoh No. 123, Kota Bandung</p>
-                                    <a href="https://maps.app.goo.gl/quVkXHeYMxg43TC56" target="_blank" class="btn-map">
+                                    <a href="https://maps.app.goo.gl/g7HWJ3d1omMd3bZn9?g_st=ic" target="_blank"
+                                        class="btn-map">
                                         <i class="bi bi-map me-2"></i>Lihat di Google Maps
                                     </a>
                                 </div>
