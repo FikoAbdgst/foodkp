@@ -177,47 +177,82 @@
     </style>
 
     <script>
-        document.querySelectorAll('.update-cart-qty').forEach(input => {
-            input.addEventListener('change', function() {
-                let id = this.dataset.id;
-                let quantity = this.value;
-                let row = this.closest('.cart-item');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fungsi untuk update LocalStorage agar sinkron dengan halaman Menu
+            function syncLocalStorage(id, currentQty, maxStock) {
+                // Rumus: Stok Tersedia (Menu) = Total Stok Database - Jumlah di Cart
+                let remainingStock = parseInt(maxStock) - parseInt(currentQty);
 
-                if (quantity < 1) return;
+                // Pastikan tidak minus
+                if (remainingStock < 0) remainingStock = 0;
 
-                fetch("{{ route('cart.update') }}", {
-                        method: "PATCH",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                        },
-                        body: JSON.stringify({
-                            id: id,
-                            quantity: quantity
+                localStorage.setItem('stok_temp_' + id, remainingStock);
+
+                // Debugging (Opsional, bisa dihapus)
+                console.log(
+                `Update Stok ID ${id}: Total ${maxStock} - Cart ${currentQty} = Sisa ${remainingStock}`);
+            }
+
+            // 1. Event Listener untuk perubahan manual (ketik angka)
+            document.querySelectorAll('.update-cart-qty').forEach(input => {
+                input.addEventListener('change', function() {
+                    let id = this.dataset.id;
+                    let quantity = parseInt(this.value);
+                    let maxStock = parseInt(this.dataset.stok); // Ambil stok asli dari database
+                    let row = this.closest('.cart-item');
+
+                    if (quantity < 1) {
+                        this.value = 1;
+                        quantity = 1;
+                    }
+
+                    // Validasi agar tidak melebihi stok database
+                    if (quantity > maxStock) {
+                        alert('Jumlah melebihi stok tersedia!');
+                        this.value = maxStock;
+                        quantity = maxStock;
+                    }
+
+                    // UPDATE LOCAL STORAGE DISINI
+                    syncLocalStorage(id, quantity, maxStock);
+
+                    // Kirim ke server
+                    fetch("{{ route('cart.update') }}", {
+                            method: "PATCH",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            },
+                            body: JSON.stringify({
+                                id: id,
+                                quantity: quantity
+                            })
                         })
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            // Update angka subtotal di baris tersebut
-                            row.querySelector('.subtotal-val').innerText = data.newSubtotal;
-                            // Update angka total keseluruhan
-                            document.getElementById('total-val').innerText = data.newTotal;
-                        }
-                    });
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                row.querySelector('.subtotal-val').innerText = data.newSubtotal;
+                                document.getElementById('total-val').innerText = data.newTotal;
+                            }
+                        });
+                });
+            });
+
+            // 2. Event Listener Tombol Hapus
+            document.querySelectorAll('form[action="{{ route('cart.remove') }}"]').forEach(form => {
+                form.addEventListener('submit', function() {
+                    const id = this.querySelector('input[name="id"]').value;
+                    const row = this.closest('.cart-item');
+                    const maxStock = parseInt(row.querySelector('.update-cart-qty').dataset.stok);
+
+                    // Jika dihapus dari cart, berarti stok di menu kembali PENUH (sesuai database)
+                    // Karena qty di cart jadi 0
+                    localStorage.setItem('stok_temp_' + id, maxStock);
+                });
             });
         });
-        // Tambahkan event listener pada tombol hapus di cart.blade.php
-        document.querySelectorAll('form[action="{{ route('cart.remove') }}"]').forEach(form => {
-            form.addEventListener('submit', function() {
-                const id = this.querySelector('input[name="id"]').value;
-                const qty = parseInt(this.closest('.cart-item').querySelector('.update-cart-qty').value);
 
-                let currentLocalStok = parseInt(localStorage.getItem('stok_temp_' + id)) || 0;
-                localStorage.setItem('stok_temp_' + id, currentLocalStok + qty);
-            });
-        });
-
+        // 3. Fungsi untuk Tombol Plus/Minus
         function changeQty(id, delta) {
             let input = document.getElementById('qty-' + id);
             let currentVal = parseInt(input.value);
@@ -227,7 +262,15 @@
             // Validasi: Minimal 1 dan Maksimal stok
             if (newVal >= 1 && newVal <= maxStok) {
                 input.value = newVal;
+
+                // Update Server & Tampilan Harga
                 updateCartRealtime(id, newVal);
+
+                // UPDATE LOCAL STORAGE DISINI (PENTING!)
+                // Rumus: Stok Temp = Total Stok DB - Stok Baru di Cart
+                let remainingStock = maxStok - newVal;
+                localStorage.setItem('stok_temp_' + id, remainingStock);
+
             } else if (newVal > maxStok) {
                 alert('Maaf, jumlah pesanan melebihi stok yang tersedia.');
             }
@@ -250,7 +293,6 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        // Update subtotal dan total bayar di halaman
                         row.querySelector('.subtotal-val').innerText = data.newSubtotal;
                         document.getElementById('total-val').innerText = data.newTotal;
                     }

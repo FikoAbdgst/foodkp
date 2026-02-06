@@ -19,16 +19,15 @@ Route::get('/home', function () {
 // Menu Routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/menu', [MenuController::class, 'index'])->name('menu.all');
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/add-to-cart/{id}', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::patch('/update-cart', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/remove-from-cart', [CartController::class, 'remove'])->name('cart.remove');
+    Route::get('/checkout-wa', [CartController::class, 'checkout'])->name('cart.checkout');
 });
 
 Auth::routes();
 
-// Cart Routes
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::post('/add-to-cart/{id}', [CartController::class, 'addToCart'])->name('cart.add');
-Route::patch('/update-cart', [CartController::class, 'update'])->name('cart.update');
-Route::delete('/remove-from-cart', [CartController::class, 'remove'])->name('cart.remove');
-Route::get('/checkout-wa', [CartController::class, 'checkout'])->name('cart.checkout');
 
 
 // Admin Routes

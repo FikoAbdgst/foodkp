@@ -11,18 +11,23 @@ class CartController extends Controller
     {
         $cart = session()->get('cart', []);
 
-        // Sinkronisasi stok terbaru dari database
-        foreach ($cart as $id => &$item) {
-            $food = Food::find($id);
-            if ($food) {
-                $item['stok'] = $food->stok;
+        if (is_array($cart)) {
+            foreach ($cart as $id => $item) {
+                $food = Food::find($id);
+
+                if ($food) {
+                    $cart[$id]['stok'] = $food->stok;
+                } else {
+                    // Opsional: Jika menu sudah dihapus dari DB, bisa dihapus dari cart
+                    // unset($cart[$id]);
+                }
             }
+
+            session()->put('cart', $cart);
         }
-        session()->put('cart', $cart);
 
         return view('cart', compact('cart'));
     }
-
     public function addToCart(Request $request, $id)
     {
         $food = Food::findOrFail($id);
@@ -88,16 +93,16 @@ class CartController extends Controller
         foreach ($cart as $id => $item) {
             $itemHarga = $item['harga'] ?? 0;
             $subtotal = $itemHarga * $item['quantity'];
-            $pesan .= "🍴 *" . ($item['nama_makanan'] ?? 'Menu') . "*\n";
+            $pesan .= "😋 *" . ($item['nama_makanan'] ?? 'Menu') . "*\n";
             $pesan .= "   Qty: " . $item['quantity'] . " x Rp" . number_format($itemHarga) . "\n";
             $pesan .= "   Subtotal: Rp" . number_format($subtotal) . "\n\n";
             $total += $subtotal;
         }
 
         $pesan .= "--------------------------\n";
-        $pesan .= "💰 *Total Bayar: Rp" . number_format($total) . "*";
+        $pesan .= "*Total Bayar: Rp" . number_format($total) . "*";
 
-        $url = "https://wa.me/628123456789?text=" . urlencode($pesan);
+        $url = "https://wa.me/6282263028951?text=" . urlencode($pesan);
         session()->forget('cart');
         return redirect()->away($url);
     }

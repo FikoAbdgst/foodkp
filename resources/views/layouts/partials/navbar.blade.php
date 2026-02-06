@@ -79,40 +79,6 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-end dropdown-custom">
-                            <li class="dropdown-header">
-                                <div class="user-info">
-                                    <div class="user-avatar-large">
-                                        <i class="bi bi-person-circle"></i>
-                                    </div>
-                                    <div class="user-details">
-                                        <strong>{{ Auth::user()->name }}</strong>
-                                        <small class="text-muted d-block">{{ Auth::user()->email }}</small>
-                                    </div>
-                                </div>
-                            </li>
-
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-
-                            <li>
-                                <a class="dropdown-item dropdown-item-custom" href="{{ route('home.user') }}">
-                                    <i class="bi bi-house-door me-2"></i>
-                                    Beranda
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item dropdown-item-custom" href="{{ route('cart.index') }}">
-                                    <i class="bi bi-cart3 me-2"></i>
-                                    Keranjang Saya
-                                </a>
-                            </li>
-
-
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-
                             <li>
                                 <a class="dropdown-item dropdown-item-logout" href="{{ route('logout') }}"
                                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -588,15 +554,19 @@
 
         // Auto-close mobile menu on link click
         const navbarCollapse = document.querySelector('.navbar-collapse');
-        const navLinks2 = document.querySelectorAll('.nav-link');
+        // REVISI: Ambil nav-link TAPI bukan yang dropdown-toggle
+        const navLinks2 = document.querySelectorAll('.nav-link:not(.dropdown-toggle)');
 
         navLinks2.forEach(link => {
             link.addEventListener('click', () => {
                 if (window.innerWidth < 992) {
-                    const bsCollapse = new bootstrap.Collapse(navbarCollapse, {
-                        toggle: false
-                    });
-                    bsCollapse.hide();
+                    // Cek apakah navbar sedang terbuka sebelum menutup
+                    if (navbarCollapse.classList.contains('show')) {
+                        const bsCollapse = new bootstrap.Collapse(navbarCollapse, {
+                            toggle: false
+                        });
+                        bsCollapse.hide();
+                    }
                 }
             });
         });

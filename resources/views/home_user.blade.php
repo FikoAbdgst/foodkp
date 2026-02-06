@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    <!-- Hero Section for Logged In User -->
     <section class="hero-user-section">
         <div class="hero-user-bg"></div>
         <div class="floating-particles">
@@ -36,7 +35,6 @@
                             </a>
                         </div>
 
-                        <!-- User Quick Info -->
                         <div class="user-quick-info mt-5">
                             <div class="info-item">
                                 <i class="bi bi-clock-history"></i>
@@ -87,7 +85,6 @@
         </div>
     </section>
 
-    <!-- Quick Features Bar -->
     <section class="quick-features-bar">
         <div class="container">
             <div class="row g-3">
@@ -139,7 +136,6 @@
         </div>
     </section>
 
-    <!-- Promo Banner -->
     <section class="promo-banner-section" data-aos="zoom-in">
         <div class="container">
             <div class="promo-banner">
@@ -158,18 +154,18 @@
         </div>
     </section>
 
-    <!-- Menu Rekomendasi Section -->
     <section id="menu-user" class="menu-user-section">
         <div class="container">
             <div class="section-header-user" data-aos="fade-up">
                 <div class="section-header-left">
                     <span class="section-subtitle">Untuk Anda</span>
                     <h2 class="section-title">Menu Rekomendasi</h2>
+                    <p class="text-muted mt-2">Pilihan menu paling laris yang wajib Anda coba!</p>
                 </div>
                 <div class="section-header-right">
                     <span class="popular-badge-user">
                         <i class="bi bi-star-fill me-2"></i>
-                        Paling Populer
+                        Top 3 Terlaris
                     </span>
                 </div>
             </div>
@@ -182,12 +178,16 @@
                 </div>
             @endif
 
-            <div class="row g-4 mt-2">
+            <div class="row g-4 mt-2 justify-content-center">
                 @php
-                    // Mencari angka terjual tertinggi dari koleksi makanan yang ada
+                    // LOGIKA BARU: Filter data foods, urutkan berdasarkan 'terjual' tertinggi, ambil maksimal 3
+                    $topFoods = $foods->sortByDesc('terjual')->take(3);
+
+                    // Mencari angka terjual tertinggi untuk label (jika diperlukan)
                     $maxTerjual = $foods->max('terjual');
                 @endphp
-                @forelse ($foods as $food)
+
+                @forelse ($topFoods as $food)
                     @php
                         $terjual = $food->terjual ?? 0;
 
@@ -196,65 +196,59 @@
                         if ($terjual >= 10) {
                             $displayTerjual = floor($terjual / 10) * 10 . '++';
                         }
-
-                        // Kriteria Populer: Jika angka terjual sama dengan angka tertinggi dan tidak nol
-                        $isPopuler = $terjual > 0 && $terjual == $maxTerjual;
                     @endphp
 
-                    <div class="col-xl-3 col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
-                        <div class="menu-card">
-                            <div class="menu-card-image">
-                                <img src="{{ asset('storage/' . $food->image) }}" alt="{{ $food->nama_makanan }}">
+                    <div class="col-xl-4 col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
+                        <div class="menu-card h-100 border-0 shadow-sm">
+                            <div class="menu-card-image position-relative overflow-hidden rounded-top-4">
+                                <img src="{{ asset('storage/' . $food->image) }}" alt="{{ $food->nama_makanan }}"
+                                    class="w-100 h-100 object-fit-cover">
 
-                                <div class="menu-card-badges">
-                                    @if ($isPopuler)
-                                        <span class="badge-popular">
-                                            <i class="bi bi-fire text-danger"></i>
-                                            Populer
-                                        </span>
-                                    @endif
-                                </div>
-
-                                <div class="menu-card-overlay">
-                                    <button class="btn-quick-view" data-bs-toggle="modal"
-                                        data-bs-target="#imageModal{{ $food->id }}" title="Perbesar Gambar">
-                                        <i class="bi bi-zoom-in"></i>
-                                    </button>
-                                </div>
-
-                                <div class="menu-card-status">
-                                    <span class="badge-available">
-                                        <i class="bi bi-check-circle-fill"></i>
-                                        Tersedia
+                                <div class="menu-card-badges position-absolute top-0 end-0 p-3">
+                                    <span
+                                        class="badge-popular bg-white text-dark shadow-sm px-3 py-2 rounded-pill fw-bold">
+                                        🔥
+                                        Populer
                                     </span>
+                                </div>
+
+                                <div
+                                    class="menu-card-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 opacity-0 hover-opacity-100 transition-all">
+                                    <button class="btn-quick-view btn btn-light rounded-circle p-3" data-bs-toggle="modal"
+                                        data-bs-target="#imageModal{{ $food->id }}" title="Perbesar Gambar">
+                                        <i class="bi bi-zoom-in fs-5"></i>
+                                    </button>
                                 </div>
                             </div>
 
-                            <div class="menu-card-body">
-                                <h5 class="menu-card-title">{{ $food->nama_makanan }}</h5>
+                            <div class="menu-card-body p-4 d-flex flex-column bg-white rounded-bottom-4">
+                                <h5 class="menu-card-title fw-bold text-dark mb-2">{{ $food->nama_makanan }}</h5>
 
-                                {{-- Pengganti Rating: Data Terjual --}}
                                 <div class="menu-card-info mb-3">
-                                    <span class="text-muted small">
-                                        <i class="bi bi-bag-check-fill text-success me-1"></i>
+                                    <span
+                                        class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
+                                        <i class="bi bi-bag-check-fill me-1"></i>
                                         Terjual {{ $displayTerjual }}
                                     </span>
                                 </div>
 
-                                <div class="menu-card-price-row">
-                                    <div class="price-wrapper">
-                                        <span class="price-label">Harga</span>
-                                        <span class="price-value">Rp {{ number_format($food->harga, 0, ',', '.') }}</span>
+                                <div class="menu-card-price-row mt-auto mb-4">
+                                    <div class="d-flex flex-column">
+                                        <small class="text-muted mb-1">Harga Spesial</small>
+                                        <span class="fs-3 fw-bold text-primary">Rp
+                                            {{ number_format($food->harga, 0, ',', '.') }}</span>
                                     </div>
                                 </div>
 
-                                <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal"
-                                    data-bs-target="#detailModal{{ $food->id }}">
-                                    <i class="bi bi-cart-plus me-2"></i> Beli
+                                <button type="button" class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm"
+                                    data-bs-toggle="modal" data-bs-target="#detailModal{{ $food->id }}">
+                                    <i class="bi bi-cart-plus me-2"></i> Pesan Sekarang
                                 </button>
                             </div>
                         </div>
                     </div>
+
+                    {{-- Modal Image --}}
                     <div class="modal fade" id="imageModal{{ $food->id }}" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-md">
                             <div class="modal-content bg-transparent border-0 shadow-none">
@@ -262,66 +256,76 @@
                                     <button type="button"
                                         class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
                                         data-bs-dismiss="modal" aria-label="Close" style="z-index: 1051;"></button>
-
                                     <div class="modal-image-container shadow-lg">
                                         <img src="{{ asset('storage/' . $food->image) }}" class="img-fluid rounded"
                                             alt="{{ $food->nama_makanan }}"
                                             style="max-height: 80vh; width: auto; object-fit: contain;">
                                     </div>
-
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    {{-- Modal Detail --}}
                     <div class="modal fade" id="detailModal{{ $food->id }}" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">{{ $food->nama_makanan }}</h5>
+                            <div class="modal-content border-0 rounded-4 overflow-hidden">
+                                <div class="modal-header border-0 pb-0">
+                                    <h5 class="modal-title fw-bold">{{ $food->nama_makanan }}</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
-                                <div class="modal-body text-start">
-                                    <div class="text-center mb-3">
-                                        <img src="{{ asset('storage/' . $food->image) }}" class="img-fluid rounded"
-                                            style="max-width: 250px; max-height: 250px;">
+                                <div class="modal-body">
+                                    <div class="text-center mb-4">
+                                        <img src="{{ asset('storage/' . $food->image) }}"
+                                            class="img-fluid rounded-4 shadow-sm"
+                                            style="max-width: 100%; height: 250px; object-fit: cover;">
                                     </div>
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h4 class="text-primary mb-0">Rp {{ number_format($food->harga, 0, ',', '.') }}
-                                        </h4>
-                                        <span class="badge bg-light text-dark border">
-                                            <i class="bi bi-bag-check-fill text-success me-1"></i>
-                                            Terjual {{ $displayTerjual }}
-                                        </span>
+                                    <div
+                                        class="d-flex justify-content-between align-items-center mb-4 bg-light p-3 rounded-3">
+                                        <div>
+                                            <small class="text-muted d-block">Harga per porsi</small>
+                                            <h4 class="text-primary fw-bold mb-0">Rp
+                                                {{ number_format($food->harga, 0, ',', '.') }}</h4>
+                                        </div>
+                                        <div class="text-end">
+                                            <small class="text-muted d-block">Total Terjual</small>
+                                            <span class="fw-bold text-dark fs-5">
+                                                <i class="bi bi-fire text-danger me-1"></i> {{ $displayTerjual }}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <p><strong>Stok Tersedia:</strong> <span
-                                            class="stok-tersedia">{{ $food->stok }}</span></p>
+
+                                    <p class="mb-2"><small class="text-muted">Stok Tersedia:</small> <strong
+                                            class="stok-tersedia">{{ $food->stok }}</strong></p>
 
                                     <form action="{{ route('cart.add', $food->id) }}" method="POST"
                                         id="formAddCart{{ $food->id }}">
                                         @csrf
-                                        <div class="mt-4">
+                                        <div class="mb-3">
                                             <label for="qty{{ $food->id }}"
-                                                class="form-label font-weight-bold">Jumlah Pesanan:</label>
-                                            <div class="input-group mb-3" style="max-width: 150px;">
+                                                class="form-label fw-bold small text-uppercase">Jumlah Pesanan</label>
+                                            <div class="input-group">
                                                 <button class="btn btn-outline-secondary" type="button"
-                                                    onclick="decrementQty({{ $food->id }})">-</button>
+                                                    onclick="decrementQty({{ $food->id }})"><i
+                                                        class="bi bi-dash"></i></button>
                                                 <input type="number" name="quantity" id="qty{{ $food->id }}"
-                                                    class="form-control text-center" value="1" min="1"
-                                                    max="{{ $food->stok }}">
+                                                    class="form-control text-center fw-bold" value="1"
+                                                    min="1" max="{{ $food->stok }}">
                                                 <button class="btn btn-outline-secondary" type="button"
-                                                    onclick="incrementQty({{ $food->id }}, {{ $food->stok }})">+</button>
+                                                    onclick="incrementQty({{ $food->id }}, {{ $food->stok }})"><i
+                                                        class="bi bi-plus"></i></button>
                                             </div>
                                         </div>
                                     </form>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Tutup</button>
-                                    <button type="submit" form="formAddCart{{ $food->id }}" class="btn btn-primary"
+                                <div class="modal-footer border-0 pt-0">
+                                    <button type="button" class="btn btn-light rounded-pill px-4"
+                                        data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" form="formAddCart{{ $food->id }}"
+                                        class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm"
                                         {{ $food->stok < 1 ? 'disabled' : '' }}>
-                                        {{ $food->stok < 1 ? 'Stok Habis' : 'Tambah ke Keranjang' }}
+                                        {{ $food->stok < 1 ? 'Stok Habis' : 'Masuk Keranjang' }}
                                     </button>
                                 </div>
                             </div>
@@ -330,11 +334,11 @@
                 @empty
                     <div class="col-12">
                         <div class="empty-menu-state" data-aos="fade-up">
-                            <div class="empty-icon">
-                                <i class="bi bi-inbox"></i>
+                            <div class="empty-icon text-muted opacity-25 mb-3">
+                                <i class="bi bi-inbox fs-1"></i>
                             </div>
-                            <h4>Belum Ada Menu Tersedia</h4>
-                            <p>Menu akan segera tersedia. Silakan cek kembali nanti.</p>
+                            <h4>Belum Ada Data Rekomendasi</h4>
+                            <p class="text-muted">Data menu akan muncul setelah ada transaksi pembelian.</p>
                         </div>
                     </div>
                 @endforelse
@@ -351,7 +355,6 @@
         </div>
     </section>
 
-    <!-- Why Choose Us -->
     <section class="why-choose-section">
         <div class="container">
             <div class="text-center mb-5" data-aos="fade-up">
@@ -400,88 +403,6 @@
         </div>
     </section>
 
-    {{-- <!-- Testimonials Section -->
-    <section class="testimonials-section">
-        <div class="container">
-            <div class="text-center mb-5" data-aos="fade-up">
-                <span class="section-subtitle">Testimoni</span>
-                <h2 class="section-title">Apa Kata Pelanggan Kami</h2>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                    <div class="testimonial-card">
-                        <div class="testimonial-rating">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                        </div>
-                        <p class="testimonial-text">"Pelayanan cepat, makanan enak, dan harga terjangkau! Sangat
-                            recommended untuk yang suka praktis."</p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">
-                                <i class="bi bi-person-circle"></i>
-                            </div>
-                            <div class="author-info">
-                                <strong>Budi Santoso</strong>
-                                <span>Pelanggan Setia</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                    <div class="testimonial-card">
-                        <div class="testimonial-rating">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                        </div>
-                        <p class="testimonial-text">"Aplikasi mudah digunakan, menu beragam. Packaging rapi dan makanan
-                            masih hangat saat tiba!"</p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">
-                                <i class="bi bi-person-circle"></i>
-                            </div>
-                            <div class="author-info">
-                                <strong>Siti Rahayu</strong>
-                                <span>Food Blogger</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                    <div class="testimonial-card">
-                        <div class="testimonial-rating">
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                        </div>
-                        <p class="testimonial-text">"Sudah jadi langganan! Promo sering banget dan customer service
-                            responsif. Top deh!"</p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">
-                                <i class="bi bi-person-circle"></i>
-                            </div>
-                            <div class="author-info">
-                                <strong>Ahmad Fauzi</strong>
-                                <span>Mahasiswa</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> --}}
-
-    <!-- Footer -->
     <footer class="footer-user-section">
         <div class="container">
             <div class="footer-top">
@@ -495,18 +416,10 @@
                             Solusi praktis untuk kebutuhan makanan Anda. Pesan dengan mudah, nikmati dengan senang hati.
                         </p>
                         <div class="social-links">
-                            <a href="#" class="social-link">
-                                <i class="bi bi-instagram"></i>
-                            </a>
-                            <a href="#" class="social-link">
-                                <i class="bi bi-facebook"></i>
-                            </a>
-                            <a href="#" class="social-link">
-                                <i class="bi bi-twitter"></i>
-                            </a>
-                            <a href="#" class="social-link">
-                                <i class="bi bi-whatsapp"></i>
-                            </a>
+                            <a href="#" class="social-link"><i class="bi bi-instagram"></i></a>
+                            <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="social-link"><i class="bi bi-twitter"></i></a>
+                            <a href="#" class="social-link"><i class="bi bi-whatsapp"></i></a>
                         </div>
                     </div>
 
@@ -551,7 +464,7 @@
             </div>
 
             <div class="footer-bottom">
-                <p>&copy; 2026 FoodKP Development. All Rights Reserved.</p>
+                <p class="mb-0">&copy; 2026 FoodKP Development. All Rights Reserved.</p>
             </div>
         </div>
     </footer>
@@ -577,10 +490,27 @@
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* Agar Footer Sticky di Bawah */
+        html,
+        body {
+            height: 100%;
+        }
+
+        #app {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+        }
+
         /* ===== HERO USER SECTION ===== */
         .hero-user-section {
             background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            padding: 100px 0 80px;
+            padding: 120px 0 80px;
+            /* Tambahkan padding atas agar tidak tertutup navbar */
             position: relative;
             overflow: hidden;
         }
@@ -1056,196 +986,23 @@
 
         /* ===== MENU CARD ===== */
         .menu-card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
+            transition: all 0.3s ease;
         }
 
         .menu-card:hover {
             transform: translateY(-10px);
-            box-shadow: var(--shadow-lg);
+        }
+
+        .hover-opacity-100:hover {
+            opacity: 1 !important;
+        }
+
+        .transition-all {
+            transition: all 0.3s ease;
         }
 
         .menu-card-image {
-            position: relative;
-            height: 240px;
-            overflow: hidden;
-        }
-
-        .menu-card-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: var(--transition);
-        }
-
-
-
-        .menu-card-badges {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            z-index: 2;
-        }
-
-        .badge-popular {
-            background: white;
-            color: var(--dark);
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            box-shadow: var(--shadow-md);
-            display: inline-block;
-        }
-
-        .badge-popular i {
-            color: var(--warning);
-        }
-
-        .menu-card-status {
-            position: absolute;
-            bottom: 16px;
-            left: 16px;
-            z-index: 2;
-        }
-
-        .badge-available {
-            background: var(--success);
-            color: white;
-            padding: 6px 14px;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .menu-card-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(51, 51, 51, 0.95);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .menu-card:hover .menu-card-overlay {
-            opacity: 1;
-        }
-
-        .btn-quick-view {
-            width: 50px;
-            height: 50px;
-            background: white;
-            border: none;
-            border-radius: 50%;
-            color: var(--primary);
-            font-size: 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transform: scale(0);
-            transition: var(--transition);
-            cursor: pointer;
-        }
-
-        .menu-card:hover .btn-quick-view {
-            transform: scale(1);
-        }
-
-        .btn-quick-view:hover {
-            background: var(--primary);
-            color: white;
-            transform: scale(1.1);
-        }
-
-        .menu-card-body {
-            padding: 24px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .menu-card-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-
-        .menu-card-rating {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .rating-stars-user {
-            display: flex;
-            gap: 2px;
-        }
-
-        .rating-stars-user i {
-            color: var(--warning);
-            font-size: 0.85rem;
-        }
-
-        .rating-text {
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 0.9rem;
-        }
-
-        .menu-card-price-row {
-            margin-bottom: 20px;
-        }
-
-        .price-wrapper {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .price-label {
-            font-size: 0.85rem;
-            color: #6c757d;
-            margin-bottom: 4px;
-        }
-
-        .price-value {
-            font-size: 1.75rem;
-            font-weight: 800;
-            color: var(--primary);
-        }
-
-        .btn-add-to-cart {
-            background: var(--light);
-            border: 2px solid transparent;
-            color: var(--primary);
-            padding: 12px 24px;
-            border-radius: 50px;
-            font-weight: 600;
-            width: 100%;
-            transition: var(--transition);
-            cursor: pointer;
-        }
-
-        .btn-add-to-cart:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+            height: 250px;
         }
 
         /* Empty State */
@@ -1258,16 +1015,6 @@
             font-size: 6rem;
             color: #dee2e6;
             margin-bottom: 24px;
-        }
-
-        .empty-menu-state h4 {
-            color: var(--dark);
-            margin-bottom: 12px;
-        }
-
-        .empty-menu-state p {
-            color: #6c757d;
-            font-size: 1.1rem;
         }
 
         /* ===== WHY CHOOSE SECTION ===== */
@@ -1317,80 +1064,14 @@
             margin: 0;
         }
 
-        /* ===== TESTIMONIALS SECTION ===== */
-        .testimonials-section {
-            padding: 80px 0;
-            background: var(--light);
-        }
-
-        .testimonial-card {
-            background: white;
-            border-radius: 20px;
-            padding: 32px;
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition);
-            height: 100%;
-        }
-
-        .testimonial-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .testimonial-rating {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 20px;
-        }
-
-        .testimonial-rating i {
-            color: var(--warning);
-            font-size: 1rem;
-        }
-
-        .testimonial-text {
-            color: #495057;
-            font-style: italic;
-            line-height: 1.8;
-            margin-bottom: 24px;
-        }
-
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding-top: 20px;
-            border-top: 2px solid var(--light);
-        }
-
-        .author-avatar {
-            width: 50px;
-            height: 50px;
-            background: var(--primary-light);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            font-size: 2rem;
-        }
-
-        .author-info strong {
-            display: block;
-            color: var(--dark);
-            font-size: 1rem;
-        }
-
-        .author-info span {
-            color: #6c757d;
-            font-size: 0.85rem;
-        }
-
         /* ===== FOOTER ===== */
         .footer-user-section {
             background: #1a1d20;
             color: white;
             padding-top: 80px;
+            /* width: 100% otomatis karena di luar container */
+            margin-top: auto;
+            /* Push to bottom in flex container */
         }
 
         .footer-top {
@@ -1526,270 +1207,6 @@
                 align-self: stretch;
                 text-align: center;
             }
-        }
-
-        @media (max-width: 767px) {
-            .hero-user-title {
-                font-size: 1.75rem;
-            }
-
-            .user-quick-info {
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            .info-item {
-                width: 100%;
-            }
-
-            .promo-content h3 {
-                font-size: 1.25rem;
-            }
-        }
-
-        /* ===== AOS ANIMATIONS ===== */
-        [data-aos] {
-            opacity: 0;
-            transition-property: opacity, transform;
-        }
-
-        [data-aos].aos-animate {
-            opacity: 1;
-        }
-
-        [data-aos="fade-up"] {
-            transform: translateY(30px);
-        }
-
-        [data-aos="fade-up"].aos-animate {
-            transform: translateY(0);
-        }
-
-        [data-aos="fade-right"] {
-            transform: translateX(-30px);
-        }
-
-        [data-aos="fade-right"].aos-animate {
-            transform: translateX(0);
-        }
-
-        [data-aos="fade-left"] {
-            transform: translateX(30px);
-        }
-
-        [data-aos="fade-left"].aos-animate {
-            transform: translateX(0);
-        }
-
-        [data-aos="zoom-in"] {
-            transform: scale(0.9);
-        }
-
-        [data-aos="zoom-in"].aos-animate {
-            transform: scale(1);
-        }
-
-        /* ===== MODAL STYLES ===== */
-        .modal-custom {
-            border: none;
-            border-radius: 24px;
-            overflow: hidden;
-        }
-
-        .modal-custom .modal-header {
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            padding: 24px 32px;
-        }
-
-        .modal-custom .modal-body {
-            padding: 32px;
-        }
-
-        .modal-image-wrapper {
-            position: relative;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: var(--shadow-md);
-        }
-
-        .modal-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 16px;
-        }
-
-        .modal-badge-wrapper {
-            position: absolute;
-            top: 16px;
-            left: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .modal-product-title {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--dark);
-            margin-bottom: 16px;
-        }
-
-        .modal-rating {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .rating-stars-modal {
-            display: flex;
-            gap: 4px;
-        }
-
-        .rating-stars-modal i {
-            color: var(--warning);
-            font-size: 1.1rem;
-        }
-
-        .rating-count {
-            color: #6c757d;
-            font-weight: 500;
-        }
-
-        .modal-price {
-            background: var(--light);
-            padding: 20px;
-            border-radius: 12px;
-        }
-
-        .price-tag {
-            display: block;
-            color: #6c757d;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-        }
-
-        .price-amount {
-            color: var(--primary);
-            font-weight: 800;
-            margin: 0;
-        }
-
-        .modal-description h6,
-        .modal-features h6 {
-            font-size: 1rem;
-        }
-
-        .modal-description p {
-            line-height: 1.8;
-        }
-
-        .features-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .features-list li {
-            padding: 8px 0;
-            color: #495057;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .features-list i {
-            font-size: 1rem;
-        }
-
-        .btn-add-modal {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            border: none;
-            color: white;
-            padding: 14px 32px;
-            border-radius: 50px;
-            font-weight: 700;
-            width: 100%;
-            transition: var(--transition);
-            box-shadow: 0 4px 16px rgba(13, 110, 253, 0.3);
-            font-size: 1.05rem;
-        }
-
-        .btn-add-modal:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(13, 110, 253, 0.4);
-        }
-
-        .badge-popular {
-            background: rgba(255, 255, 255, 0.95);
-            color: #1a1d20;
-            padding: 6px 14px;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .badge-popular i {
-            font-size: 1rem;
-            animation: flicker 1.5s infinite alternate;
-        }
-
-        .modal-image-container {
-            background-color: rgba(0, 0, 0, 0.1);
-            border-radius: 15px;
-            display: inline-block;
-            overflow: hidden;
-        }
-
-        /* Memastikan bayangan (shadow) terlihat jelas pada gambar modal */
-        .modal-image-container img {
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-
-        @keyframes flicker {
-            0% {
-                opacity: 0.8;
-                transform: scale(1);
-            }
-
-            100% {
-                opacity: 1;
-                transform: scale(1.1);
-            }
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 991px) {
-            .hero-user-title {
-                font-size: 2rem;
-            }
-
-            .section-title {
-                font-size: 2rem;
-            }
-
-            .promo-icon {
-                display: none;
-            }
-
-            .promo-banner {
-                padding: 30px;
-            }
-
-            .section-header-user {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .popular-badge-user {
-                align-self: stretch;
-                text-align: center;
-            }
 
             /* Perbaikan untuk Feature Bar */
             .feature-bar-item {
@@ -1804,7 +1221,7 @@
 
         @media (max-width: 767px) {
             .hero-user-section {
-                padding: 80px 0 60px;
+                padding: 100px 0 60px;
             }
 
             .hero-user-title {
@@ -1841,16 +1258,16 @@
                 font-size: 1.1rem;
             }
 
-            .price-value {
-                font-size: 1.5rem;
-            }
-
             /* Footer */
             .footer-top {
                 text-align: center;
             }
 
             .social-links {
+                justify-content: center;
+            }
+
+            .footer-contact li {
                 justify-content: center;
             }
         }
@@ -1918,7 +1335,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             // Inisialisasi stok dari database ke localStorage jika belum ada
-            @foreach ($foods as $food)
+            @foreach ($topFoods as $food)
                 if (localStorage.getItem('stok_temp_{{ $food->id }}') === null) {
                     localStorage.setItem('stok_temp_{{ $food->id }}', '{{ $food->stok }}');
                 }
