@@ -523,6 +523,26 @@
             padding: 0.5rem 0;
         }
     }
+
+    @media (max-width: 576px) {
+        .brand-custom {
+            font-size: 1.25rem;
+        }
+
+        .brand-icon {
+            font-size: 1.5rem;
+        }
+
+        .navbar-collapse {
+            margin-top: 0.75rem;
+        }
+
+        .dropdown-custom {
+            min-width: 100%;
+            left: 0 !important;
+            right: 0 !important;
+        }
+    }
 </style>
 
 <script>

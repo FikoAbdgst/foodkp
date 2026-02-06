@@ -1762,6 +1762,131 @@
                 transform: scale(1.1);
             }
         }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 991px) {
+            .hero-user-title {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .promo-icon {
+                display: none;
+            }
+
+            .promo-banner {
+                padding: 30px;
+            }
+
+            .section-header-user {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .popular-badge-user {
+                align-self: stretch;
+                text-align: center;
+            }
+
+            /* Perbaikan untuk Feature Bar */
+            .feature-bar-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .feature-bar-icon {
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .hero-user-section {
+                padding: 80px 0 60px;
+            }
+
+            .hero-user-title {
+                font-size: 1.75rem;
+            }
+
+            .hero-user-subtitle {
+                font-size: 1rem;
+            }
+
+            .user-quick-info {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .info-item {
+                width: 100%;
+            }
+
+            .promo-content h3 {
+                font-size: 1.25rem;
+            }
+
+            .promo-content p {
+                font-size: 0.95rem;
+            }
+
+            /* Menu Cards */
+            .menu-card-image {
+                height: 200px;
+            }
+
+            .menu-card-title {
+                font-size: 1.1rem;
+            }
+
+            .price-value {
+                font-size: 1.5rem;
+            }
+
+            /* Footer */
+            .footer-top {
+                text-align: center;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-user-title {
+                font-size: 1.5rem;
+            }
+
+            .hero-user-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-primary-hero,
+            .btn-outline-hero {
+                width: 100%;
+                text-align: center;
+            }
+
+            /* Quick Features - 1 kolom di mobile kecil */
+            .quick-features-bar .row>div {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+
+            /* Promo Banner */
+            .promo-banner {
+                padding: 20px;
+            }
+
+            .promo-badge {
+                font-size: 0.75rem;
+                padding: 6px 12px;
+            }
+        }
     </style>
 
     <script>

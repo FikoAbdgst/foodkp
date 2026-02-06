@@ -105,6 +105,76 @@
             @endif
         </div>
     </div>
+    <style>
+        @media (max-width: 991px) {
+            .cart-item .row {
+                flex-direction: column;
+            }
+
+            .cart-item .col-md-5,
+            .cart-item .col-md-4,
+            .cart-item .col-md-3 {
+                flex: 0 0 100%;
+                max-width: 100%;
+                margin-bottom: 15px;
+            }
+
+            .cart-item .col-md-3 {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .py-5 {
+                padding-top: 2rem !important;
+                padding-bottom: 2rem !important;
+            }
+
+            .card {
+                margin-bottom: 20px;
+            }
+
+            .cart-item {
+                padding: 15px !important;
+            }
+
+            .cart-item img {
+                width: 60px;
+                height: 60px;
+            }
+
+            /* Sticky summary di mobile */
+            .sticky-top {
+                position: relative !important;
+                top: auto !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .cart-item h6 {
+                font-size: 0.95rem;
+            }
+
+            .input-group {
+                max-width: 120px !important;
+            }
+
+            .btn-lg {
+                padding: 0.75rem 1rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
 
     <script>
         document.querySelectorAll('.update-cart-qty').forEach(input => {

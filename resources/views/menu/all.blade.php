@@ -904,6 +904,99 @@
         [data-aos="fade-left"].aos-animate {
             transform: translateX(0);
         }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 991px) {
+            .page-header-section {
+                padding: 100px 0 40px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .filter-bar {
+                flex-direction: column;
+            }
+
+            .filter-item {
+                min-width: 100%;
+            }
+
+            .menu-count-badge {
+                display: block;
+                text-align: center;
+                margin-top: 15px;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .page-header-section {
+                padding: 80px 0 30px;
+            }
+
+            .page-title {
+                font-size: 1.75rem;
+            }
+
+            .page-subtitle {
+                font-size: 1rem;
+            }
+
+            .breadcrumb {
+                font-size: 0.85rem;
+            }
+
+            /* Filter Section */
+            .filter-section {
+                padding: 20px 0;
+            }
+
+            .filter-item label {
+                font-size: 0.9rem;
+            }
+
+            /* Menu Cards */
+            .menu-card-image {
+                height: 200px;
+            }
+
+            .menu-card-title {
+                font-size: 1.1rem;
+            }
+
+            .price-value {
+                font-size: 1.5rem;
+            }
+
+            .all-menu-section {
+                padding: 40px 0 60px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .menu-count-badge {
+                font-size: 0.85rem;
+                padding: 12px 20px;
+            }
+
+            /* 1 kolom di mobile kecil */
+            .all-menu-section .row>div {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+
+            .search-input,
+            .sort-select {
+                font-size: 0.9rem;
+                padding: 10px 14px;
+            }
+        }
     </style>
 
     <script>

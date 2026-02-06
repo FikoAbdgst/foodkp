@@ -1133,6 +1133,147 @@
         [data-aos="zoom-in"].aos-animate {
             transform: scale(1);
         }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 991px) {
+            .hero-section {
+                padding: 100px 0 80px;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .cta-title {
+                font-size: 2rem;
+            }
+
+            .hero-stats {
+                margin-top: 40px !important;
+            }
+
+            /* Features Section */
+            .feature-card {
+                margin-bottom: 20px;
+            }
+
+            /* Menu Section */
+            .section-header-with-badge {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .popular-badge {
+                align-self: stretch;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .hero-section {
+                padding: 80px 0 60px;
+                min-height: auto;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-primary-custom,
+            .btn-outline-custom {
+                width: 100%;
+            }
+
+            /* Stats */
+            .hero-stats .col-4 {
+                flex: 0 0 100%;
+                max-width: 100%;
+                margin-bottom: 15px;
+            }
+
+            /* Food Cards */
+            .food-card-body {
+                padding: 20px;
+            }
+
+            .food-name {
+                font-size: 1.1rem;
+            }
+
+            .food-price {
+                font-size: 1.5rem;
+            }
+
+            /* CTA Section */
+            .cta-section {
+                padding: 60px 0;
+            }
+
+            .cta-title {
+                font-size: 1.75rem;
+            }
+
+            .cta-description {
+                font-size: 1rem;
+            }
+
+            /* Footer */
+            .footer-section {
+                padding-top: 60px;
+            }
+
+            .footer-top {
+                text-align: center;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-title {
+                font-size: 1.75rem;
+            }
+
+            .section-title {
+                font-size: 1.75rem;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+            }
+
+            /* Features */
+            .feature-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 2rem;
+            }
+
+            .feature-title {
+                font-size: 1.25rem;
+            }
+
+            /* Food Cards - 1 kolom di mobile kecil */
+            .menu-section .row>div {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
     </style>
 
     <!-- AOS Animation Library (Optional - for scroll animations) -->
