@@ -7,30 +7,26 @@ use App\Models\Food;
 
 class CartController extends Controller
 {
-    // Menampilkan halaman keranjang
     public function index()
     {
         $cart = session()->get('cart', []);
         return view('cart', compact('cart'));
     }
 
-
     public function addToCart(Request $request, $id)
     {
         $food = Food::findOrFail($id);
         $cart = session()->get('cart', []);
-
-        // Ambil quantity dari input, defaultnya 1 jika tidak diisi
         $quantity = $request->input('quantity', 1);
 
         if (isset($cart[$id])) {
             $cart[$id]['quantity'] += $quantity;
         } else {
             $cart[$id] = [
-                "name" => $food->nama_makanan,
-                "quantity" => $quantity,
-                "price" => $food->harga,
-                "image" => $food->gambar
+                "nama_makanan" => $food->nama_makanan,
+                "quantity" => (int)$quantity,
+                "harga" => $food->harga,
+                "image" => $food->image
             ];
         }
 
@@ -38,18 +34,28 @@ class CartController extends Controller
         return redirect()->back()->with('success', 'Produk berhasil ditambahkan ke keranjang!');
     }
 
-    // Update quantity di keranjang
+    // UPDATE: Dibuat untuk merespon AJAX agar realtime
     public function update(Request $request)
     {
         if ($request->id && $request->quantity) {
             $cart = session()->get('cart');
-            $cart[$request->id]["quantity"] = $request->quantity;
+            $cart[$request->id]["quantity"] = (int)$request->quantity;
             session()->put('cart', $cart);
-            return redirect()->back()->with('success', 'Keranjang diperbarui!');
+
+            // Hitung ulang total untuk dikirim balik ke frontend
+            $total = 0;
+            foreach ($cart as $item) {
+                $total += ($item['harga'] ?? 0) * $item['quantity'];
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'newSubtotal' => number_format($cart[$request->id]["quantity"] * $cart[$request->id]["harga"], 0, ',', '.'),
+                'newTotal' => number_format($total, 0, ',', '.')
+            ]);
         }
     }
 
-    // Hapus item dari keranjang
     public function remove(Request $request)
     {
         if ($request->id) {
@@ -62,7 +68,6 @@ class CartController extends Controller
         }
     }
 
-    // Redirect ke WhatsApp
     public function checkout()
     {
         $cart = session()->get('cart');
@@ -72,9 +77,11 @@ class CartController extends Controller
         $total = 0;
 
         foreach ($cart as $id => $item) {
-            $subtotal = $item['harga'] * $item['quantity'];
-            $pesan .= "🍴 *" . $item['nama'] . "*\n";
-            $pesan .= "   Qty: " . $item['quantity'] . " x Rp" . number_format($item['harga']) . "\n";
+            $itemHarga = $item['harga'] ?? 0;
+            $subtotal = $itemHarga * $item['quantity'];
+            // PERBAIKAN: Gunakan 'nama_makanan' agar tidak undefined
+            $pesan .= "🍴 *" . ($item['nama_makanan'] ?? 'Menu') . "*\n";
+            $pesan .= "   Qty: " . $item['quantity'] . " x Rp" . number_format($itemHarga) . "\n";
             $pesan .= "   Subtotal: Rp" . number_format($subtotal) . "\n\n";
             $total += $subtotal;
         }
@@ -82,10 +89,8 @@ class CartController extends Controller
         $pesan .= "--------------------------\n";
         $pesan .= "💰 *Total Bayar: Rp" . number_format($total) . "*";
 
-        // Ganti nomor di bawah dengan nomor WA Anda (gunakan kode negara 62)
         $url = "https://wa.me/628123456789?text=" . urlencode($pesan);
-
-        session()->forget('cart'); // Kosongkan keranjang setelah checkout
+        session()->forget('cart');
         return redirect()->away($url);
     }
 }

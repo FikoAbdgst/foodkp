@@ -256,15 +256,19 @@
                         </div>
                     </div>
                     <div class="modal fade" id="imageModal{{ $food->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-lg">
-                            <div class="modal-content bg-transparent border-0">
-                                <div class="modal-body p-0 text-center">
+                        <div class="modal-dialog modal-dialog-centered modal-md">
+                            <div class="modal-content bg-transparent border-0 shadow-none">
+                                <div class="modal-body p-0 text-center position-relative">
                                     <button type="button"
                                         class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
-                                        data-bs-dismiss="modal" aria-label="Close"></button>
-                                    <img src="{{ asset('storage/' . $food->image) }}" class="img-fluid rounded shadow-lg"
-                                        alt="{{ $food->nama_makanan }}">
-                                    <h4 class="text-white mt-3">{{ $food->nama_makanan }}</h4>
+                                        data-bs-dismiss="modal" aria-label="Close" style="z-index: 1051;"></button>
+
+                                    <div class="modal-image-container shadow-lg">
+                                        <img src="{{ asset('storage/' . $food->image) }}" class="img-fluid rounded"
+                                            alt="{{ $food->nama_makanan }}"
+                                            style="max-height: 80vh; width: auto; object-fit: contain;">
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -1732,6 +1736,19 @@
             font-size: 1rem;
             animation: flicker 1.5s infinite alternate;
         }
+
+        .modal-image-container {
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        /* Memastikan bayangan (shadow) terlihat jelas pada gambar modal */
+        .modal-image-container img {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
 
         @keyframes flicker {
             0% {

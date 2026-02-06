@@ -51,203 +51,187 @@
     <!-- Menu Grid Section -->
     <section class="all-menu-section">
         <div class="container">
-            @if (session('success'))
-                <div class="alert alert-success-custom mb-4" role="alert">
-                    <i class="bi bi-check-circle-fill me-2"></i>
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
+            @php
+                // Mencari angka terjual tertinggi untuk menentukan label populer
+                $maxTerjual = $foods->max('terjual');
+            @endphp
 
-            <div class="row g-4" id="menuGrid">
-                @forelse ($foods as $food)
-                    <div class="col-xl-3 col-lg-4 col-md-6 menu-item" data-name="{{ strtolower($food->nama_makanan) }}"
-                        data-price="{{ $food->harga }}" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
-                        <div class="menu-card">
-                            <div class="menu-card-image">
-                                <img src="{{ asset('storage/' . $food->image) }}" alt="{{ $food->nama_makanan }}">
-                                <div class="menu-card-badges">
+            @forelse ($foods as $food)
+                @php
+                    $terjual = $food->terjual ?? 0;
+                    $displayTerjual = $terjual >= 10 ? floor($terjual / 10) * 10 . '++' : $terjual;
+                    $isPopuler = $terjual > 0 && $terjual == $maxTerjual;
+                @endphp
+
+                <div class="col-xl-3 col-lg-4 col-md-6 menu-item" data-name="{{ strtolower($food->nama_makanan) }}"
+                    data-price="{{ $food->harga }}" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
+                    <div class="menu-card">
+                        <div class="menu-card-image">
+                            <img src="{{ asset('storage/' . $food->image) }}" alt="{{ $food->nama_makanan }}">
+                            <div class="menu-card-badges">
+                                @if ($isPopuler)
                                     <span class="badge-popular">
-                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-fire text-danger"></i>
                                         Populer
                                     </span>
+                                @endif
+                            </div>
+                            <div class="menu-card-overlay">
+                                <button class="btn-quick-view" data-bs-toggle="modal"
+                                    data-bs-target="#imageModal{{ $food->id }}" title="Perbesar Gambar">
+                                    <i class="bi bi-zoom-in"></i>
+                                </button>
+                            </div>
+                            <div class="menu-card-status">
+                                <span class="badge-available">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Tersedia
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="menu-card-body">
+                            <h5 class="menu-card-title">{{ $food->nama_makanan }}</h5>
+
+                            <div class="menu-card-info mb-3">
+                                <span class="text-muted small">
+                                    <i class="bi bi-bag-check-fill text-success me-1"></i>
+                                    Terjual {{ $displayTerjual }}
+                                </span>
+                            </div>
+
+                            <div class="menu-card-price-row">
+                                <div class="price-wrapper">
+                                    <span class="price-label">Harga</span>
+                                    <span class="price-value">Rp {{ number_format($food->harga, 0, ',', '.') }}</span>
                                 </div>
-                                <div class="menu-card-overlay">
-                                    <button type="button" data-bs-toggle="modal" data-bs-target="#modalDetailId">
-                                        Lihat Detail
-                                    </button>
+                            </div>
+
+                            <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal"
+                                data-bs-target="#detailModal{{ $food->id }}">
+                                <i class="bi bi-cart-plus me-2"></i> Beli
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="imageModal{{ $food->id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-md">
+                        <div class="modal-content bg-transparent border-0 shadow-none">
+                            <div class="modal-body p-0 text-center position-relative">
+                                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3"
+                                    data-bs-dismiss="modal" aria-label="Close" style="z-index: 1051;"></button>
+
+                                <div class="modal-image-container shadow-lg">
+                                    <img src="{{ asset('storage/' . $food->image) }}" class="img-fluid rounded"
+                                        alt="{{ $food->nama_makanan }}"
+                                        style="max-height: 80vh; width: auto; object-fit: contain;">
                                 </div>
-                                <div class="menu-card-status">
-                                    <span class="badge-available">
-                                        <i class="bi bi-check-circle-fill"></i>
-                                        Tersedia
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="detailModal{{ $food->id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">{{ $food->nama_makanan }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-start">
+                                <div class="text-center mb-3">
+                                    <img src="{{ asset('storage/' . $food->image) }}" class="img-fluid rounded"
+                                        style="max-width: 250px; max-height: 250px;">
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 class="text-primary mb-0">Rp {{ number_format($food->harga, 0, ',', '.') }}</h4>
+                                    <span class="badge bg-light text-dark border">
+                                        <i class="bi bi-bag-check-fill text-success me-1"></i>
+                                        Terjual {{ $displayTerjual }}
                                     </span>
                                 </div>
-                            </div>
+                                <p><strong>Stok Tersedia:</strong> {{ $food->stok }}</p>
 
-                            <div class="menu-card-body">
-                                <h5 class="menu-card-title">{{ $food->nama_makanan }}</h5>
-
-                                <div class="menu-card-rating">
-                                    <div class="rating-stars-user">
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                        <i class="bi bi-star-fill"></i>
-                                    </div>
-                                    <span class="rating-text">5.0</span>
-                                </div>
-
-                                <div class="menu-card-price-row">
-                                    <div class="price-wrapper">
-                                        <span class="price-label">Harga</span>
-                                        <span class="price-value">Rp {{ number_format($food->harga, 0, ',', '.') }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="menu-card-actions">
-                                    <button class="btn-detail" data-bs-toggle="modal"
-                                        data-bs-target="#detailModal{{ $food->id }}">
-                                        <i class="bi bi-info-circle me-1"></i>
-                                        Detail
-                                    </button>
-                                    <form action="{{ route('cart.add', $food->id) }}" method="POST" class="flex-grow-1">
-                                        @csrf
-                                        <button type="submit" class="btn-add-to-cart">
-                                            <i class="bi bi-cart-plus me-1"></i>
-                                            Pesan
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Modal Detail -->
-                    <div class="modal fade" id="detailModal{{ $food->id }}" tabindex="-1"
-                        aria-labelledby="detailModalLabel{{ $food->id }}" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-lg">
-                            <div class="modal-content modal-custom">
-                                <div class="modal-header border-0">
-                                    <h5 class="modal-title fw-bold" id="detailModalLabel{{ $food->id }}">
-                                        <i class="bi bi-info-circle-fill text-primary me-2"></i>
-                                        Detail Menu
-                                    </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="row g-4">
-                                        <div class="col-md-6">
-                                            <div class="modal-image-wrapper">
-                                                <img src="{{ asset('storage/' . $food->image) }}"
-                                                    alt="{{ $food->nama_makanan }}" class="modal-image">
-                                                <div class="modal-badge-wrapper">
-                                                    <span class="badge bg-success">
-                                                        <i class="bi bi-check-circle-fill me-1"></i>
-                                                        Tersedia
-                                                    </span>
-                                                    <span class="badge bg-warning text-dark">
-                                                        <i class="bi bi-star-fill me-1"></i>
-                                                        Populer
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="modal-info">
-                                                <h3 class="modal-product-title">{{ $food->nama_makanan }}</h3>
-
-                                                <div class="modal-rating mb-3">
-                                                    <div class="rating-stars-modal">
-                                                        <i class="bi bi-star-fill"></i>
-                                                        <i class="bi bi-star-fill"></i>
-                                                        <i class="bi bi-star-fill"></i>
-                                                        <i class="bi bi-star-fill"></i>
-                                                        <i class="bi bi-star-fill"></i>
-                                                    </div>
-                                                    <span class="rating-count">(5.0 / 127 ulasan)</span>
-                                                </div>
-
-                                                <div class="modal-price mb-4">
-                                                    <span class="price-tag">Harga</span>
-                                                    <h2 class="price-amount">Rp
-                                                        {{ number_format($food->harga, 0, ',', '.') }}</h2>
-                                                </div>
-
-                                                <div class="modal-description mb-4">
-                                                    <h6 class="fw-bold mb-2">
-                                                        <i class="bi bi-card-text text-primary me-2"></i>
-                                                        Deskripsi
-                                                    </h6>
-                                                    <p class="text-muted">
-                                                        {{ $food->deskripsi ?? 'Nikmati kelezatan ' . $food->nama_makanan . ' dengan cita rasa yang khas dan bahan-bahan berkualitas terbaik. Cocok untuk dinikmati kapan saja!' }}
-                                                    </p>
-                                                </div>
-
-                                                <div class="modal-features mb-4">
-                                                    <h6 class="fw-bold mb-3">
-                                                        <i class="bi bi-patch-check text-primary me-2"></i>
-                                                        Keunggulan
-                                                    </h6>
-                                                    <ul class="features-list">
-                                                        <li><i class="bi bi-check-circle-fill text-success"></i> Bahan
-                                                            segar & berkualitas</li>
-                                                        <li><i class="bi bi-check-circle-fill text-success"></i> Higienis &
-                                                            halal</li>
-                                                        <li><i class="bi bi-check-circle-fill text-success"></i> Siap dalam
-                                                            30 menit</li>
-                                                        <li><i class="bi bi-check-circle-fill text-success"></i> Packaging
-                                                            aman</li>
-                                                    </ul>
-                                                </div>
-
-                                                <form action="{{ route('cart.add', $food->id) }}" method="POST">
-                                                    @csrf
-                                                    <button type="submit" class="btn-add-modal">
-                                                        <i class="bi bi-cart-plus me-2"></i>
-                                                        Tambah ke Keranjang
-                                                    </button>
-                                                </form>
-                                            </div>
+                                <form action="{{ route('cart.add', $food->id) }}" method="POST"
+                                    id="formAddCart{{ $food->id }}">
+                                    @csrf
+                                    <div class="mt-4">
+                                        <label for="qty{{ $food->id }}" class="form-label font-weight-bold">Jumlah
+                                            Pesanan:</label>
+                                        <div class="input-group mb-3" style="max-width: 150px;">
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                onclick="decrementQty({{ $food->id }})">-</button>
+                                            <input type="number" name="quantity" id="qty{{ $food->id }}"
+                                                class="form-control text-center" value="1" min="1"
+                                                max="{{ $food->stok }}">
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                onclick="incrementQty({{ $food->id }}, {{ $food->stok }})">+</button>
                                         </div>
                                     </div>
-                                </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="submit" form="formAddCart{{ $food->id }}" class="btn btn-primary"
+                                    {{ $food->stok < 1 ? 'disabled' : '' }}>
+                                    {{ $food->stok < 1 ? 'Stok Habis' : 'Tambah ke Keranjang' }}
+                                </button>
                             </div>
                         </div>
                     </div>
-                @empty
-                    <div class="col-12">
-                        <div class="empty-menu-state">
-                            <div class="empty-icon">
-                                <i class="bi bi-inbox"></i>
-                            </div>
-                            <h4>Belum Ada Menu Tersedia</h4>
-                            <p>Menu akan segera tersedia. Silakan cek kembali nanti.</p>
-                            <a href="{{ route('home.user') }}" class="btn btn-primary-custom mt-3">
-                                <i class="bi bi-arrow-left me-2"></i>
-                                Kembali ke Beranda
-                            </a>
-                        </div>
-                    </div>
-                @endforelse
-            </div>
-
-            <!-- Empty Search Result -->
-            <div id="noResults" class="empty-search-state" style="display: none;">
-                <div class="empty-icon">
-                    <i class="bi bi-search"></i>
                 </div>
-                <h4>Tidak Ada Menu yang Cocok</h4>
-                <p>Coba kata kunci pencarian lain atau reset filter</p>
+            @empty
+                <div class="col-12">
+                    <div class="empty-menu-state">
+                        <div class="empty-icon">
+                            <i class="bi bi-inbox"></i>
+                        </div>
+                        <h4>Belum Ada Menu Tersedia</h4>
+                        <p>Menu akan segera tersedia. Silakan cek kembali nanti.</p>
+                        <a href="{{ route('home.user') }}" class="btn btn-primary-custom mt-3">
+                            <i class="bi bi-arrow-left me-2"></i>
+                            Kembali ke Beranda
+                        </a>
+                    </div>
+                </div>
+            @endforelse
+        </div>
+
+        <!-- Empty Search Result -->
+        <div id="noResults" class="empty-search-state" style="display: none;">
+            <div class="empty-icon">
+                <i class="bi bi-search"></i>
             </div>
+            <h4>Tidak Ada Menu yang Cocok</h4>
+            <p>Coba kata kunci pencarian lain atau reset filter</p>
+        </div>
         </div>
     </section>
 
 
 
     <style>
+        :root {
+            --primary: #0d6efd;
+            --primary-dark: #0a58ca;
+            --primary-light: rgba(13, 110, 253, 0.1);
+            --success: #198754;
+            --success-light: rgba(25, 135, 84, 0.1);
+            --warning: #ffc107;
+            --warning-light: rgba(255, 193, 7, 0.1);
+            --info: #0dcaf0;
+            --info-light: rgba(13, 202, 240, 0.1);
+            --dark: #212529;
+            --light: #f8f9fa;
+            --white: #ffffff;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         /* ===== PAGE HEADER ===== */
         .page-header-section {
             background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
@@ -269,6 +253,18 @@
 
         .breadcrumb-item.active {
             color: #6c757d;
+        }
+
+        .modal-image-container {
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        /* Memastikan bayangan (shadow) terlihat jelas pada gambar modal */
+        .modal-image-container img {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
         .page-title {
@@ -342,14 +338,17 @@
             padding: 60px 0 80px;
             background: var(--light);
             min-height: 60vh;
+
         }
 
-        /* Menu Card - sama seperti sebelumnya */
+        /* Update pada bagian CSS di dalam file all.blade.php */
+
         .menu-card {
             background: white;
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: var(--shadow-sm);
+            /* Menambahkan shadow default */
+            box-shadow: var(--shadow-md);
             transition: var(--transition);
             height: 100%;
             display: flex;
@@ -358,6 +357,7 @@
 
         .menu-card:hover {
             transform: translateY(-10px);
+            /* Membuat shadow lebih tegas saat di-hover */
             box-shadow: var(--shadow-lg);
         }
 
@@ -423,7 +423,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(13, 110, 253, 0.95);
+            background: rgba(51, 51, 51, 0.95);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -583,6 +583,7 @@
             position: relative;
             border-radius: 16px;
             overflow: hidden;
+            /* Menambahkan shadow pada gambar di dalam modal */
             box-shadow: var(--shadow-md);
         }
 
@@ -963,5 +964,21 @@
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
         });
+
+        function incrementQty(id, max) {
+            let input = document.getElementById('qty' + id);
+            let currentValue = parseInt(input.value);
+            if (currentValue < max) {
+                input.value = currentValue + 1;
+            }
+        }
+
+        function decrementQty(id) {
+            let input = document.getElementById('qty' + id);
+            let currentValue = parseInt(input.value);
+            if (currentValue > 1) {
+                input.value = currentValue - 1;
+            }
+        }
     </script>
 @endsection
