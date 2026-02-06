@@ -58,6 +58,16 @@
 
             @forelse ($foods as $food)
                 @php
+                    // Ambil data keranjang dari session
+                    $cart = session('cart', []);
+                    // Cek berapa banyak item ini yang sudah ada di keranjang
+                    $qtyInCart = $cart[$food->id]['quantity'] ?? 0;
+                    // Hitung sisa stok efektif (Stok Database - Stok di Keranjang)
+                    $effectiveStok = $food->stok - $qtyInCart;
+
+                    // Status Logic
+                    $isHabis = $food->stok <= 0;
+                    $isFullInCart = !$isHabis && $effectiveStok <= 0;
                     $terjual = $food->terjual ?? 0;
                     $displayTerjual = $terjual >= 10 ? floor($terjual / 10) * 10 . '++' : $terjual;
                     $isPopuler = $terjual > 0 && $terjual == $maxTerjual;
@@ -65,7 +75,7 @@
 
                 <div class="col-xl-3 col-lg-4 col-md-6 menu-item" data-name="{{ strtolower($food->nama_makanan) }}"
                     data-price="{{ $food->harga }}" data-aos="fade-up" data-aos-delay="{{ $loop->index * 50 }}">
-                    <div class="menu-card">
+                    <div class="menu-card {{ $isHabis || $isFullInCart ? 'opacity-75' : '' }}">
                         <div class="menu-card-image">
                             <img src="{{ asset('storage/' . $food->image) }}" alt="{{ $food->nama_makanan }}">
                             <div class="menu-card-badges">
@@ -94,10 +104,19 @@
                             <h5 class="menu-card-title">{{ $food->nama_makanan }}</h5>
 
                             <div class="menu-card-info mb-3">
-                                <span class="text-muted small">
-                                    <i class="bi bi-bag-check-fill text-success me-1"></i>
-                                    Terjual {{ $displayTerjual }}
-                                </span>
+                                @if ($isHabis)
+                                    <span class="badge bg-danger shadow-sm">
+                                        <i class="bi bi-x-circle me-1"></i> Stok Habis
+                                    </span>
+                                @elseif ($isFullInCart)
+                                    <span class="badge bg-warning text-dark shadow-sm">
+                                        <i class="bi bi-cart-check-fill me-1"></i> Stok di Keranjang
+                                    </span>
+                                @elseif ($isPopuler)
+                                    <span class="badge-popular">
+                                        <i class="bi bi-fire text-danger"></i> Populer
+                                    </span>
+                                @endif
                             </div>
 
                             <div class="menu-card-price-row">
@@ -152,7 +171,8 @@
                                         Terjual {{ $displayTerjual }}
                                     </span>
                                 </div>
-                                <p><strong>Stok Tersedia:</strong> {{ $food->stok }}</p>
+                                <p><strong>Stok Tersedia:</strong> <span class="stok-tersedia">{{ $food->stok }}</span>
+                                </p>
 
                                 <form action="{{ route('cart.add', $food->id) }}" method="POST"
                                     id="formAddCart{{ $food->id }}">
@@ -965,10 +985,66 @@
             });
         });
 
-        function incrementQty(id, max) {
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inisialisasi stok dari database ke localStorage jika belum ada
+            @foreach ($foods as $food)
+                if (localStorage.getItem('stok_temp_{{ $food->id }}') === null) {
+                    localStorage.setItem('stok_temp_{{ $food->id }}', '{{ $food->stok }}');
+                }
+                updateModalDisplay({{ $food->id }});
+            @endforeach
+
+            // Tangani pengiriman form keranjang
+            document.querySelectorAll('form[id^="formAddCart"]').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const foodId = this.id.replace('formAddCart', '');
+                    const inputQty = document.getElementById('qty' + foodId);
+                    const qtyOrdered = parseInt(inputQty.value);
+
+                    let currentStok = parseInt(localStorage.getItem('stok_temp_' + foodId));
+
+                    if (qtyOrdered > currentStok) {
+                        e.preventDefault();
+                        alert('Maaf, stok tidak mencukupi di keranjang lokal Anda.');
+                        return;
+                    }
+
+                    // Kurangi stok di localStorage sebelum form dikirim ke server
+                    const newStok = currentStok - qtyOrdered;
+                    localStorage.setItem('stok_temp_' + foodId, newStok);
+                });
+            });
+        });
+
+        function updateModalDisplay(id) {
+            const localStok = localStorage.getItem('stok_temp_' + id);
+            const stokDisplay = document.querySelector(`#detailModal${id} .stok-tersedia`);
+            const inputQty = document.getElementById('qty' + id);
+            const btnSubmit = document.querySelector(`#detailModal${id} button[type="submit"]`);
+
+            if (stokDisplay) {
+                stokDisplay.innerText = localStok;
+            }
+
+            if (inputQty) {
+                inputQty.max = localStok; // Batasi input maksimal sesuai localStorage
+                if (parseInt(localStok) <= 0) {
+                    inputQty.value = 0;
+                    inputQty.min = 0;
+                    if (btnSubmit) {
+                        btnSubmit.disabled = true;
+                        btnSubmit.innerText = 'Stok Habis (di Keranjang)';
+                    }
+                }
+            }
+        }
+
+        function incrementQty(id) {
             let input = document.getElementById('qty' + id);
+            let currentStok = parseInt(localStorage.getItem('stok_temp_' + id));
             let currentValue = parseInt(input.value);
-            if (currentValue < max) {
+
+            if (currentValue < currentStok) {
                 input.value = currentValue + 1;
             }
         }

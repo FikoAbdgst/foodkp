@@ -35,7 +35,7 @@
                             </a>
                         </div>
 
-                        <!-- Stats -->
+                        {{-- <!-- Stats -->
                         <div class="hero-stats mt-5 pt-4">
                             <div class="row g-4 text-center text-lg-start">
                                 <div class="col-4">
@@ -57,34 +57,33 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
 
                 <div class="col-lg-6 d-none d-lg-block">
                     <div class="hero-image-section" data-aos="fade-left">
-                        <div class="hero-image-wrapper">
-                            <div class="hero-card hero-card-1">
-                                <i class="bi bi-emoji-smile-fill"></i>
-                                <div>
-                                    <strong>Kepuasan Pelanggan</strong>
-                                    <p class="mb-0 small text-muted">Rating 4.8/5.0</p>
-                                </div>
+                        <div class="hero-card hero-card-1">
+                            <i class="bi bi-emoji-smile-fill"></i>
+                            <div>
+                                <strong>Makanan Enak Dan Sedap</strong>
+                                <p class="mb-0 small text-muted">dengan bahan yang berkualitas</p>
                             </div>
-                            <div class="hero-card hero-card-2">
-                                <i class="bi bi-clock-fill"></i>
-                                <div>
-                                    <strong>Pengiriman Cepat</strong>
-                                    <p class="mb-0 small text-muted">30 Menit Tiba</p>
-                                </div>
+                        </div>
+                        <div class="hero-card hero-card-2">
+                            <i class="bi bi-clock-fill"></i>
+                            <div>
+                                <strong>Pengiriman Cepat</strong>
+                                <p class="mb-0 small text-muted">30 Menit Tiba</p>
                             </div>
-                            <div class="main-hero-icon">
-                                <i class="bi bi-basket2-fill"></i>
-                            </div>
+                        </div>
+                        <div class="main-hero-icon">
+                            <i class="bi bi-basket2-fill"></i>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     </section>
 
@@ -169,9 +168,7 @@
                                     Populer
                                 </div>
                                 <div class="food-overlay">
-                                    <a href="{{ route('login') }}" class="quick-view-btn">
-                                        <i class="bi bi-eye-fill"></i>
-                                    </a>
+
                                 </div>
                             </div>
 
@@ -750,9 +747,6 @@
             transition: var(--transition);
         }
 
-        .food-card:hover .food-image {
-            transform: scale(1.15);
-        }
 
         .food-badge {
             position: absolute;
@@ -778,7 +772,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(13, 110, 253, 0.9);
+            background: rgba(48, 48, 48, 0.9);
             display: flex;
             align-items: center;
             justify-content: center;

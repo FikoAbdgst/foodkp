@@ -295,7 +295,8 @@
                                             Terjual {{ $displayTerjual }}
                                         </span>
                                     </div>
-                                    <p><strong>Stok Tersedia:</strong> {{ $food->stok }}</p>
+                                    <p><strong>Stok Tersedia:</strong> <span
+                                            class="stok-tersedia">{{ $food->stok }}</span></p>
 
                                     <form action="{{ route('cart.add', $food->id) }}" method="POST"
                                         id="formAddCart{{ $food->id }}">
@@ -1790,10 +1791,66 @@
             });
         });
 
-        function incrementQty(id, max) {
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inisialisasi stok dari database ke localStorage jika belum ada
+            @foreach ($foods as $food)
+                if (localStorage.getItem('stok_temp_{{ $food->id }}') === null) {
+                    localStorage.setItem('stok_temp_{{ $food->id }}', '{{ $food->stok }}');
+                }
+                updateModalDisplay({{ $food->id }});
+            @endforeach
+
+            // Tangani pengiriman form keranjang
+            document.querySelectorAll('form[id^="formAddCart"]').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const foodId = this.id.replace('formAddCart', '');
+                    const inputQty = document.getElementById('qty' + foodId);
+                    const qtyOrdered = parseInt(inputQty.value);
+
+                    let currentStok = parseInt(localStorage.getItem('stok_temp_' + foodId));
+
+                    if (qtyOrdered > currentStok) {
+                        e.preventDefault();
+                        alert('Maaf, stok tidak mencukupi di keranjang lokal Anda.');
+                        return;
+                    }
+
+                    // Kurangi stok di localStorage sebelum form dikirim ke server
+                    const newStok = currentStok - qtyOrdered;
+                    localStorage.setItem('stok_temp_' + foodId, newStok);
+                });
+            });
+        });
+
+        function updateModalDisplay(id) {
+            const localStok = localStorage.getItem('stok_temp_' + id);
+            const stokDisplay = document.querySelector(`#detailModal${id} .stok-tersedia`);
+            const inputQty = document.getElementById('qty' + id);
+            const btnSubmit = document.querySelector(`#detailModal${id} button[type="submit"]`);
+
+            if (stokDisplay) {
+                stokDisplay.innerText = localStok;
+            }
+
+            if (inputQty) {
+                inputQty.max = localStok; // Batasi input maksimal sesuai localStorage
+                if (parseInt(localStok) <= 0) {
+                    inputQty.value = 0;
+                    inputQty.min = 0;
+                    if (btnSubmit) {
+                        btnSubmit.disabled = true;
+                        btnSubmit.innerText = 'Stok Habis (di Keranjang)';
+                    }
+                }
+            }
+        }
+
+        function incrementQty(id) {
             let input = document.getElementById('qty' + id);
+            let currentStok = parseInt(localStorage.getItem('stok_temp_' + id));
             let currentValue = parseInt(input.value);
-            if (currentValue < max) {
+
+            if (currentValue < currentStok) {
                 input.value = currentValue + 1;
             }
         }

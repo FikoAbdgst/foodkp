@@ -10,6 +10,16 @@ class CartController extends Controller
     public function index()
     {
         $cart = session()->get('cart', []);
+
+        // Sinkronisasi stok terbaru dari database
+        foreach ($cart as $id => &$item) {
+            $food = Food::find($id);
+            if ($food) {
+                $item['stok'] = $food->stok;
+            }
+        }
+        session()->put('cart', $cart);
+
         return view('cart', compact('cart'));
     }
 
@@ -23,7 +33,7 @@ class CartController extends Controller
             $cart[$id]['quantity'] += $quantity;
         } else {
             $cart[$id] = [
-                "nama_makanan" => $food->nama_makanan,
+                "nama_makanan" => $food->nama_makanan, // Kunci ini harus sama dengan di Blade
                 "quantity" => (int)$quantity,
                 "harga" => $food->harga,
                 "image" => $food->image
@@ -31,9 +41,8 @@ class CartController extends Controller
         }
 
         session()->put('cart', $cart);
-        return redirect()->back()->with('success', 'Produk berhasil ditambahkan ke keranjang!');
+        return redirect()->back()->with('success', 'Produk berhasil ditambahkan!');
     }
-
     // UPDATE: Dibuat untuk merespon AJAX agar realtime
     public function update(Request $request)
     {
@@ -79,7 +88,6 @@ class CartController extends Controller
         foreach ($cart as $id => $item) {
             $itemHarga = $item['harga'] ?? 0;
             $subtotal = $itemHarga * $item['quantity'];
-            // PERBAIKAN: Gunakan 'nama_makanan' agar tidak undefined
             $pesan .= "🍴 *" . ($item['nama_makanan'] ?? 'Menu') . "*\n";
             $pesan .= "   Qty: " . $item['quantity'] . " x Rp" . number_format($itemHarga) . "\n";
             $pesan .= "   Subtotal: Rp" . number_format($subtotal) . "\n\n";

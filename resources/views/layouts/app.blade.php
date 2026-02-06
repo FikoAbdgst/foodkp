@@ -2,23 +2,18 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
-    <!-- Custom CSS -->
     <link href="{{ asset('css/custom-styles.css') }}" rel="stylesheet">
 
-    <!-- Google Fonts (Optional) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <style>
-    /* public/css/custom-styles.css */
-
+    /* CSS Sidebar (Sama seperti sebelumnya) */
     :root {
         --sidebar-width: 260px;
         --primary-color: #4f46e5;
@@ -58,7 +53,6 @@
         height: 100vh;
     }
 
-    /* Sidebar Header */
     .sidebar-header {
         padding: 24px;
         border-bottom: 1px solid var(--border-color);
@@ -80,7 +74,6 @@
         margin: 0;
     }
 
-    /* Sidebar Menu */
     .sidebar-menu {
         padding: 16px 12px;
         flex-grow: 1;
@@ -118,7 +111,6 @@
         color: var(--sidebar-active-text);
     }
 
-    /* Sidebar Footer & Logout */
     .sidebar-footer {
         padding: 16px;
         border-top: 1px solid var(--border-color);
@@ -144,16 +136,13 @@
         background: #fecaca;
     }
 
-    /* Content Area */
     .content-area {
         width: 100%;
         padding: 30px;
         margin-left: var(--sidebar-width);
-        /* Agar konten tidak tertutup sidebar fixed */
         min-height: 100vh;
     }
 
-    /* Responsive */
     @media (max-width: 768px) {
         #sidebar {
             margin-left: calc(-1 * var(--sidebar-width));
@@ -162,8 +151,6 @@
         .content-area {
             margin-left: 0;
         }
-
-        /* Anda bisa menambahkan toggle button jika diperlukan untuk mobile */
     }
 </style>
 
@@ -221,13 +208,20 @@
                     </div>
                 </div>
             @else
+                {{-- User Login Biasa --}}
                 @include('layouts.partials.navbar')
                 <main class="py-4">
                     <div class="container">@yield('content')</div>
                 </main>
             @endif
         @else
-            @include('layouts.partials.navbar')
+            {{-- GUEST (Belum Login) --}}
+
+            {{-- LOGIC BARU: Sembunyikan Navbar jika di halaman Login atau Register --}}
+            @if (!request()->routeIs('login') && !request()->routeIs('register'))
+                @include('layouts.partials.navbar')
+            @endif
+
             <main>
                 @yield('content')
             </main>

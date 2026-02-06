@@ -32,7 +32,8 @@
                                                 class="rounded-3 shadow-sm me-3" width="80" height="80"
                                                 style="object-fit: cover;">
                                             <div>
-                                                <h6 class="fw-bold mb-1">{{ $item['nama_makanan'] }}</h6>
+                                                <h6 class="fw-bold mb-1">
+                                                    {{ $item['nama_makanan'] ?? 'Menu Tidak Diketahui' }}</h6>
                                                 <p class="text-primary fw-semibold mb-0">
                                                     Rp{{ number_format($itemHarga, 0, ',', '.') }}</p>
                                             </div>
@@ -42,12 +43,20 @@
                                     <div class="col-md-4">
                                         <div class="d-flex align-items-center gap-2">
                                             <label class="text-muted small">Qty:</label>
-                                            <div class="input-group" style="max-width: 120px;">
-                                                <input type="number" class="form-control text-center update-cart-qty"
-                                                    data-id="{{ $id }}" value="{{ $item['quantity'] }}"
-                                                    min="1">
+                                            <div class="input-group" style="max-width: 140px;">
+                                                <button class="btn btn-outline-secondary btn-sm" type="button"
+                                                    onclick="changeQty('{{ $id }}', -1)">-</button>
+
+                                                <input type="number" id="qty-{{ $id }}"
+                                                    class="form-control form-control-sm text-center update-cart-qty"
+                                                    data-id="{{ $id }}" data-stok="{{ $item['stok'] ?? 0 }}"
+                                                    value="{{ $item['quantity'] }}" readonly>
+
+                                                <button class="btn btn-outline-secondary btn-sm" type="button"
+                                                    onclick="changeQty('{{ $id }}', 1)">+</button>
                                             </div>
                                         </div>
+                                        <small class="text-muted">Stok: {{ $item['stok'] ?? 0 }}</small>
                                     </div>
 
                                     <div class="col-md-3 text-end">
@@ -128,5 +137,55 @@
                     });
             });
         });
+        // Tambahkan event listener pada tombol hapus di cart.blade.php
+        document.querySelectorAll('form[action="{{ route('cart.remove') }}"]').forEach(form => {
+            form.addEventListener('submit', function() {
+                const id = this.querySelector('input[name="id"]').value;
+                const qty = parseInt(this.closest('.cart-item').querySelector('.update-cart-qty').value);
+
+                let currentLocalStok = parseInt(localStorage.getItem('stok_temp_' + id)) || 0;
+                localStorage.setItem('stok_temp_' + id, currentLocalStok + qty);
+            });
+        });
+
+        function changeQty(id, delta) {
+            let input = document.getElementById('qty-' + id);
+            let currentVal = parseInt(input.value);
+            let maxStok = parseInt(input.dataset.stok);
+            let newVal = currentVal + delta;
+
+            // Validasi: Minimal 1 dan Maksimal stok
+            if (newVal >= 1 && newVal <= maxStok) {
+                input.value = newVal;
+                updateCartRealtime(id, newVal);
+            } else if (newVal > maxStok) {
+                alert('Maaf, jumlah pesanan melebihi stok yang tersedia.');
+            }
+        }
+
+        function updateCartRealtime(id, quantity) {
+            let row = document.querySelector(`.cart-item[data-id="${id}"]`);
+
+            fetch("{{ route('cart.update') }}", {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        quantity: quantity
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Update subtotal dan total bayar di halaman
+                        row.querySelector('.subtotal-val').innerText = data.newSubtotal;
+                        document.getElementById('total-val').innerText = data.newTotal;
+                    }
+                })
+                .catch(err => console.error('Error:', err));
+        }
     </script>
 @endsection

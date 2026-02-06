@@ -55,7 +55,15 @@
                         <a class="nav-link nav-link-cart" href="{{ route('cart.index') }}">
                             <div class="cart-icon-wrapper">
                                 <i class="bi bi-cart3"></i>
-                                <span class="cart-badge">0</span>
+                                @php
+                                    $totalQty = 0;
+                                    if (session('cart')) {
+                                        $totalQty = array_sum(array_column(session('cart'), 'quantity'));
+                                    }
+                                @endphp
+                                <span class="badge rounded-pill bg-danger">
+                                    {{ $totalQty }}
+                                </span>
                             </div>
                             <span class="d-lg-none ms-2">Keranjang</span>
                         </a>
@@ -99,18 +107,7 @@
                                     Keranjang Saya
                                 </a>
                             </li>
-                            <li>
-                                <a class="dropdown-item dropdown-item-custom" href="#">
-                                    <i class="bi bi-clock-history me-2"></i>
-                                    Riwayat Pesanan
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item dropdown-item-custom" href="#">
-                                    <i class="bi bi-gear me-2"></i>
-                                    Pengaturan
-                                </a>
-                            </li>
+
 
                             <li>
                                 <hr class="dropdown-divider">
