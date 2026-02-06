@@ -26,8 +26,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('admin-access', function (User $user) {
             return $user->role === 'admin';
         });
-        if (app()->environment('local')) {
-            URL::forceScheme('https');
-        }
+        // if (app()->environment('local')) {
+        //     URL::forceScheme('https');
+        // }
     }
 }

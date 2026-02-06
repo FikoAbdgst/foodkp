@@ -82,25 +82,49 @@ class CartController extends Controller
         }
     }
 
-    public function checkout()
+    public function checkout(Request $request)
     {
         $cart = session()->get('cart');
         if (!$cart) return redirect()->back();
 
+        // Ambil data dari Form
+        $orderType = $request->input('orderType'); // 'delivery' atau 'takeaway'
+        $latitude = $request->input('latitude');
+        $longitude = $request->input('longitude');
+        $alamatLengkap = $request->input('alamat_lengkap');
+
+        // Header Pesan
         $pesan = "Halo Admin, saya ingin memesan:\n\n";
         $total = 0;
 
+        // Loop Item Cart
         foreach ($cart as $id => $item) {
             $itemHarga = $item['harga'] ?? 0;
             $subtotal = $itemHarga * $item['quantity'];
             $pesan .= "😋 *" . ($item['nama_makanan'] ?? 'Menu') . "*\n";
-            $pesan .= "   Qty: " . $item['quantity'] . " x Rp" . number_format($itemHarga) . "\n";
-            $pesan .= "   Subtotal: Rp" . number_format($subtotal) . "\n\n";
+            $pesan .= "   Qty: " . $item['quantity'] . " x Rp" . number_format($itemHarga, 0, ',', '.') . "\n";
+            $pesan .= "   Subtotal: Rp" . number_format($subtotal, 0, ',', '.') . "\n\n";
             $total += $subtotal;
         }
 
         $pesan .= "--------------------------\n";
-        $pesan .= "*Total Bayar: Rp" . number_format($total) . "*";
+        $pesan .= "*Total Bayar: Rp" . number_format($total, 0, ',', '.') . "*\n\n";
+
+        // Logika Tambahan Pesan Berdasarkan Tipe Order
+        $pesan .= "*INFO PENGIRIMAN:*\n";
+        if ($orderType === 'delivery') {
+            $pesan .= "Metode: 🛵 *Delivery Order*\n";
+            $pesan .= "Alamat: " . $alamatLengkap . "\n";
+            // Link Google Maps User
+            if ($latitude && $longitude) {
+                $pesan .= "Lokasi Saya: https://www.google.com/maps?q={$latitude},{$longitude}";
+            } else {
+                $pesan .= "Lokasi: (User tidak membagikan lokasi)";
+            }
+        } else {
+            $pesan .= "Metode: 🛍️ *Take Away*\n";
+            $pesan .= "Saya akan mengambil pesanan ke lokasi outlet.";
+        }
 
         $url = "https://wa.me/6282263028951?text=" . urlencode($pesan);
         session()->forget('cart');

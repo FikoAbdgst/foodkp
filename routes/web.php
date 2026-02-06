@@ -23,7 +23,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/add-to-cart/{id}', [CartController::class, 'addToCart'])->name('cart.add');
     Route::patch('/update-cart', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/remove-from-cart', [CartController::class, 'remove'])->name('cart.remove');
-    Route::get('/checkout-wa', [CartController::class, 'checkout'])->name('cart.checkout');
+    // Ubah dari Route::get menjadi Route::post
+    Route::post('/cart/checkout', [App\Http\Controllers\CartController::class, 'checkout'])->name('cart.checkout');
 });
 
 Auth::routes();

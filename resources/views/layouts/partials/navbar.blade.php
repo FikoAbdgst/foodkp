@@ -61,9 +61,9 @@
                                         $totalQty = array_sum(array_column(session('cart'), 'quantity'));
                                     }
                                 @endphp
-                                <span class="badge rounded-pill bg-danger">
-                                    {{ $totalQty }}
-                                </span>
+                                @if ($totalQty > 0)
+                                    <span class="cart-badge">{{ $totalQty }}</span>
+                                @endif
                             </div>
                             <span class="d-lg-none ms-2">Keranjang</span>
                         </a>
@@ -199,7 +199,9 @@
 
     .cart-icon-wrapper {
         position: relative;
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .cart-icon-wrapper i {
@@ -209,18 +211,24 @@
 
     .cart-badge {
         position: absolute;
-        top: -8px;
-        right: -10px;
-        background: linear-gradient(135deg, #ff4757 0%, #e84118 100%);
+        top: -6px;
+        right: -8px;
+        background: linear-gradient(135deg, #dc3545 0%, #b02a37 100%);
         color: white;
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         font-weight: 700;
-        padding: 2px 6px;
+        padding: 2px 5px;
         border-radius: 10px;
-        min-width: 20px;
+        min-width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         text-align: center;
-        box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.5);
         animation: pulse-badge 2s infinite;
+        line-height: 1;
+        border: 2px solid white;
     }
 
     @keyframes pulse-badge {
@@ -309,7 +317,7 @@
         border-radius: 16px;
         padding: 0;
         margin-top: 12px;
-        min-width: 280px;
+        min-width: 200px;
         animation: slideDown 0.3s ease-out;
         overflow: hidden;
     }
@@ -324,78 +332,6 @@
             opacity: 1;
             transform: translateY(0);
         }
-    }
-
-    .dropdown-header {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-        padding: 1.25rem;
-        border: none;
-    }
-
-    .user-info {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .user-avatar-large {
-        width: 50px;
-        height: 50px;
-        background: rgba(255, 255, 255, 0.3);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.8rem;
-        flex-shrink: 0;
-    }
-
-    .user-details {
-        color: white;
-        flex: 1;
-    }
-
-    .user-details strong {
-        display: block;
-        font-size: 1rem;
-        margin-bottom: 2px;
-    }
-
-    .user-details small {
-        color: rgba(255, 255, 255, 0.9);
-        font-size: 0.8rem;
-    }
-
-    .dropdown-divider {
-        margin: 0;
-        border-color: rgba(0, 0, 0, 0.08);
-    }
-
-    .dropdown-item-custom {
-        padding: 0.75rem 1.25rem;
-        color: #495057;
-        font-weight: 500;
-        transition: var(--transition);
-        display: flex;
-        align-items: center;
-    }
-
-    .dropdown-item-custom i {
-        width: 20px;
-        font-size: 1.1rem;
-        color: var(--primary-color);
-        transition: var(--transition);
-    }
-
-    .dropdown-item-custom:hover {
-        background: rgba(13, 110, 253, 0.08);
-        color: var(--primary-color);
-        padding-left: 1.5rem;
-    }
-
-    .dropdown-item-custom:hover i {
-        transform: translateX(3px);
     }
 
     .dropdown-item-logout {
@@ -534,33 +470,13 @@
             }
         });
 
-        // Update cart badge (example - connect to your actual cart count)
-        function updateCartBadge() {
-            const cartBadge = document.querySelector('.cart-badge');
-            if (cartBadge) {
-                // Replace this with actual cart count from your backend
-                const cartCount = 0; // Get from your cart system
-                cartBadge.textContent = cartCount;
-
-                if (cartCount > 0) {
-                    cartBadge.style.display = 'block';
-                } else {
-                    cartBadge.style.display = 'none';
-                }
-            }
-        }
-
-        updateCartBadge();
-
         // Auto-close mobile menu on link click
         const navbarCollapse = document.querySelector('.navbar-collapse');
-        // REVISI: Ambil nav-link TAPI bukan yang dropdown-toggle
         const navLinks2 = document.querySelectorAll('.nav-link:not(.dropdown-toggle)');
 
         navLinks2.forEach(link => {
             link.addEventListener('click', () => {
                 if (window.innerWidth < 992) {
-                    // Cek apakah navbar sedang terbuka sebelum menutup
                     if (navbarCollapse.classList.contains('show')) {
                         const bsCollapse = new bootstrap.Collapse(navbarCollapse, {
                             toggle: false
