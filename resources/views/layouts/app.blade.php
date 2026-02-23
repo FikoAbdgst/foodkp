@@ -4,17 +4,14 @@
 
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-
     <link href="{{ asset('css/custom-styles.css') }}" rel="stylesheet">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <style>
-    /* CSS Sidebar (Sama seperti sebelumnya) */
+    /* CSS Sidebar */
     :root {
         --sidebar-width: 260px;
         --primary-color: #4f46e5;
@@ -52,6 +49,7 @@
         flex-direction: column;
         position: fixed;
         height: 100vh;
+        z-index: 1000;
     }
 
     .sidebar-header {
@@ -142,6 +140,7 @@
         padding: 30px;
         margin-left: var(--sidebar-width);
         min-height: 100vh;
+        transition: all 0.3s;
     }
 
     @media (max-width: 768px) {
@@ -159,18 +158,68 @@
     <div id="app">
         @auth
             @if (Auth::user()->role == 'admin')
-                {{-- ... bagian admin tetap sama ... --}}
+                {{-- LAYOUT ADMIN --}}
+                <div class="wrapper">
+                    <nav id="sidebar">
+                        <div class="sidebar-header">
+                            <h3><i class="bi bi-shop"></i> Admin Panel</h3>
+                            <p>Food Management System</p>
+                        </div>
+
+                        <div class="sidebar-menu">
+                            <div class="menu-item">
+                                <a href="{{ route('dashboard') }}"
+                                    class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                                    <i class="bi bi-speedometer2"></i> Dashboard
+                                </a>
+                            </div>
+                            <div class="menu-item">
+                                <a href="{{ route('foods.index') }}"
+                                    class="{{ request()->routeIs('foods.*') ? 'active' : '' }}">
+                                    <i class="bi bi-egg-fried"></i> Kelola Menu
+                                </a>
+                            </div>
+                            <div class="menu-item">
+                                <a href="{{ route('stok.index') }}"
+                                    class="{{ request()->routeIs('stok.*') ? 'active' : '' }}">
+                                    <i class="bi bi-box-seam"></i> Kelola Stok
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="sidebar-footer">
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="logout-btn">
+                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                </button>
+                            </form>
+                        </div>
+                    </nav>
+
+                    <div class="content-area">
+                        {{-- Pesan Flash --}}
+                        @if (session('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @endif
+
+                        @yield('content')
+                    </div>
+                </div>
             @else
-                {{-- User Login Biasa --}}
+                {{-- LAYOUT USER BIASA --}}
                 @include('layouts.partials.navbar')
 
-                {{-- HAPUS class py-4 dan div container di sini --}}
                 <main>
                     @yield('content')
                 </main>
             @endif
         @else
-            {{-- GUEST (Belum Login) --}}
+            {{-- LAYOUT GUEST (BELUM LOGIN) --}}
             @if (!request()->routeIs('login') && !request()->routeIs('register'))
                 @include('layouts.partials.navbar')
             @endif
