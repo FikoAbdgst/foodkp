@@ -271,7 +271,7 @@
                             </li>
                             <li>
                                 <i class="bi bi-phone-fill"></i>
-                                <span>+62 878-2521-1141</span>
+                                <span>+62 815-6462-4079</span>
                             </li>
                         </ul>
                     </div>
