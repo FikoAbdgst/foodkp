@@ -5,11 +5,12 @@
         <div class="container py-4 py-md-5">
             <!-- Header -->
             <div class="page-header mb-4 mb-md-5">
-                <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                     <div>
                         <h1 class="page-title mb-1">Keranjang Belanja</h1>
                         <p class="text-muted mb-0">Periksa pesanan Anda sebelum checkout</p>
                     </div>
+
 
                 </div>
             </div>
@@ -128,14 +129,26 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="summary-footer">
+                            <div class="summary-footer"
+                                style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
                                 <button type="button" class="btn-checkout" data-bs-toggle="modal"
                                     data-bs-target="#checkoutModal">
                                     <i class="bi bi-whatsapp me-2"></i>Lanjutkan Pembayaran
                                 </button>
-                                <a href="{{ route('menu.all') }}" class="btn-continue-shopping">
-                                    <i class="bi bi-arrow-left me-2"></i>Lanjut Belanja
-                                </a>
+                                @if ($cart && count($cart) > 0)
+                                    <div>
+                                        <form action="{{ route('cart.clear') }}" method="POST" class="m-0">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-outline-danger"
+                                                style="border-radius: 50px; font-weight: 600;"
+                                                onclick="return confirm('Apakah Anda yakin ingin mengosongkan semua item di keranjang?')">
+                                                <i class="bi bi-trash3 me-2"></i>Kosongkan Keranjang
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endif
+
                             </div>
                         </div>
                     </div>

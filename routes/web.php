@@ -23,7 +23,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/add-to-cart/{id}', [CartController::class, 'addToCart'])->name('cart.add');
     Route::patch('/update-cart', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/remove-from-cart', [CartController::class, 'remove'])->name('cart.remove');
-    // Ubah dari Route::get menjadi Route::post
+
+    // TAMBAHKAN ROUTE INI
+    Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+
     Route::post('/cart/checkout', [App\Http\Controllers\CartController::class, 'checkout'])->name('cart.checkout');
 });
 

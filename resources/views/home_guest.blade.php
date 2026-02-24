@@ -5,9 +5,10 @@
     <section class="hero-section position-relative overflow-hidden">
         <div class="hero-bg-pattern"></div>
         <div class="floating-shapes">
-            <div class="shape shape-1"></div>
-            <div class="shape shape-2"></div>
-            <div class="shape shape-3"></div>
+
+            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="logo-float logo-float-1">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="logo-float logo-float-2">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="logo-float logo-float-3">
         </div>
 
         <div class="container position-relative" style="padding: 10px 0 100px; z-index: 2;">
@@ -254,9 +255,6 @@
                             </a>
                         </div>
                     </div>
-
-
-
                     <div class="col-lg-6 col-md-6">
                         <h5 class="footer-heading">Hubungi Kami</h5>
                         <ul class="footer-contact">
@@ -1258,6 +1256,38 @@
                 flex: 0 0 100%;
                 max-width: 100%;
             }
+
+        }
+
+        /* ===== CSS UNTUK LOGO MENGAMBANG ===== */
+        .logo-float {
+            position: absolute;
+            opacity: 0.3;
+            object-fit: contain;
+            z-index: 1;
+            /* Kita panggil animasi 'floatCard' yang SAMA PERSIS dengan kotak pengiriman */
+            animation: floatCard 4s infinite ease-in-out;
+        }
+
+        .logo-float-1 {
+            width: 35px;
+            top: 25%;
+            left: 55%;
+            animation-delay: 0s;
+        }
+
+        .logo-float-2 {
+            width: 45px;
+            top: 35%;
+            right: 20%;
+            animation-delay: 1.5s;
+        }
+
+        .logo-float-3 {
+            width: 25px;
+            bottom: 40%;
+            left: 55%;
+            animation-delay: 3s;
         }
     </style>
 

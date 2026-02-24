@@ -144,4 +144,11 @@ class CartController extends Controller
         // session()->forget('cart');
         return redirect()->away($url);
     }
+    public function clear()
+    {
+        // Menghapus semua isi cart dari session
+        session()->forget('cart');
+
+        return redirect()->back()->with('success', 'Keranjang berhasil dikosongkan!');
+    }
 }

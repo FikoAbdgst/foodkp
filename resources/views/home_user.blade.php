@@ -4,13 +4,13 @@
     <section class="hero-user-section">
         <div class="hero-user-bg"></div>
         <div class="floating-particles">
-            <div class="particle particle-1"></div>
-            <div class="particle particle-2"></div>
-            <div class="particle particle-3"></div>
-            <div class="particle particle-4"></div>
-        </div>
+            <img src="{{ asset('images/logo.png') }}" alt="Logo"
+                style="position: absolute; width: 40px; top: 45%; right: 5%; opacity: 0.3; object-fit: contain; z-index: 1; animation: float-logo-subtle 16s infinite ease-in-out; animation-delay: 2s;">
 
-        <div class="container position-relative" style="z-index: 2;">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo"
+                style="position: absolute; width: 30px; bottom: 85%; left: 65%; opacity: 0.3; object-fit: contain; z-index: 1; animation: float-logo-subtle 18s infinite ease-in-out; animation-delay: 4s;">
+        </div>
+        <div class="container position-relative" style="padding: 10px 0 100px; z-index: 2;">
             <div class="row align-items-center g-5">
                 <div class="col-lg-7" data-aos="fade-right">
                     <div class="hero-user-content">
@@ -1257,6 +1257,37 @@
             .promo-badge {
                 font-size: 0.75rem;
                 padding: 6px 12px;
+            }
+
+        }
+
+        /* Animasi Logo User */
+        .animasi-logo-user {
+            animation: floatLogoUser 18s infinite ease-in-out;
+        }
+
+        @keyframes floatLogoUser {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg) scale(1);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(-15deg) scale(1.1);
+            }
+        }
+
+        /* Animasi mengambang khusus logo agar tidak berputar terbalik */
+        @keyframes float-logo-subtle {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-25px) rotate(-10deg);
             }
         }
     </style>
