@@ -158,13 +158,15 @@
                     <div class="col-xl-3 col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
                         <div class="food-card">
                             <div class="food-image-wrapper">
-
+                                <img src="{{ asset('storage/' . $food->image) }}" alt="{{ $food->nama_makanan }}"
+                                    class="w-100 h-100 object-fit-cover">
                                 <div class="food-badge">
                                     <i class="bi bi-star-fill"></i>
                                     Populer
                                 </div>
                                 <div class="food-overlay">
-
+                                    <img src="{{ asset('storage/' . $food->image) }}" alt="{{ $food->nama_makanan }}"
+                                        class="w-100 h-100 object-fit-cover">
                                 </div>
                             </div>
 
