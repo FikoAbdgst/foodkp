@@ -10,7 +10,7 @@
             <div class="shape shape-3"></div>
         </div>
 
-        <div class="container position-relative" style="padding: 140px 0 120px; z-index: 2;">
+        <div class="container position-relative" style="padding: 10px 0 100px; z-index: 2;">
             <div class="row align-items-center g-5">
                 <div class="col-lg-6 text-center text-lg-start">
                     <div class="hero-content" data-aos="fade-up">
