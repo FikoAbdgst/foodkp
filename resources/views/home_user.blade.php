@@ -398,7 +398,7 @@
                         <ul class="footer-contact">
                             <li>
                                 <i class="bi bi-geo-alt-fill"></i>
-                                <span>Perum Permata Padalarang D No.22 Desa Jayamekar, Kec Padalarang, Kab Bandung
+                                <span>Perum Permata Padalarang D No.23 Desa Jayamekar, Kec Padalarang, Kab Bandung
                                     Barat</span>
                             </li>
                             <li>

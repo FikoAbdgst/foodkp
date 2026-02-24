@@ -77,9 +77,6 @@
                                 <p class="mb-0 small text-muted">30 Menit Tiba</p>
                             </div>
                         </div>
-                        <div class="main-hero-icon">
-                            <img src={{ asset('images/logo.png') }} alt="logo" style="width: 50px; height: 50px;">
-                        </div>
                     </div>
                 </div>
             </div>
@@ -161,8 +158,7 @@
                     <div class="col-xl-3 col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
                         <div class="food-card">
                             <div class="food-image-wrapper">
-                                <img src="{{ asset('storage/' . $food->image) }}" class="food-image"
-                                    alt="{{ $food->nama_makanan }}">
+
                                 <div class="food-badge">
                                     <i class="bi bi-star-fill"></i>
                                     Populer
@@ -264,7 +260,7 @@
                         <ul class="footer-contact">
                             <li>
                                 <i class="bi bi-geo-alt-fill"></i>
-                                <span>Perum Permata Padalarang D No.22 Desa Jayamekar, Kec Padalarang, Kab Bandung
+                                <span>Perum Permata Padalarang D No.23 Desa Jayamekar, Kec Padalarang, Kab Bandung
                                     Barat</span>
                             </li>
                             <li>

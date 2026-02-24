@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top navbar-custom">
     <div class="container">
-        <a class="navbar-brand brand-custom" href="{{ url('/') }}">
-            <img src={{ asset('images/logo.png') }} alt="logo" style="width: 50px; height: 50px;">
+        <a class="navbar-brand brand-custom" href="{{ Auth::check() ? route('home.user') : route('home.guest') }}">
+            <img src="{{ asset('images/logo.png') }}" alt="logo" style="width: 50px; height: 50px;">
             <span class="brand-text">Lokomart</span>
         </a>
 
