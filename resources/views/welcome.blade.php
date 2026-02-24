@@ -11,7 +11,7 @@
 
     <section id="mengapa-kami" class="py-5 bg-white">
         <div class="container text-center">
-            <h2 class="fw-bold mb-5">Mengapa Memilih FoodKP?</h2>
+            <h2 class="fw-bold mb-5">Mengapa Memilih Lokomart?</h2>
             <div class="row g-4">
                 <div class="col-md-4">
                     <div class="p-4">
@@ -82,7 +82,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6 mb-4">
-                    <h4 class="fw-bold text-primary">FoodKP</h4>
+                    <h4 class="fw-bold text-primary">Lokomart</h4>
                     <p class="text-muted">Solusi lapar praktis untuk Anda. Pesan, bayar, dan nikmati makanan Anda tanpa
                         ribet.</p>
                 </div>
@@ -104,7 +104,7 @@
                 </div>
             </div>
             <hr class="my-4 border-secondary">
-            <p class="text-center text-muted small">&copy; 2026 FoodKP Development. All Rights Reserved.</p>
+            <p class="text-center text-muted small">&copy; 2026 Lokomart Development. All Rights Reserved.</p>
         </div>
     </footer>
 @endsection

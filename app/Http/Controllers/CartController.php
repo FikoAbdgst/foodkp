@@ -140,7 +140,7 @@ class CartController extends Controller
             $pesan .= "Saya akan mengambil pesanan ke lokasi outlet.";
         }
 
-        $url = "https://wa.me/6282263028951?text=" . urlencode($pesan);
+        $url = "https://wa.me/6287825211141?text=" . urlencode($pesan);
         // session()->forget('cart');
         return redirect()->away($url);
     }

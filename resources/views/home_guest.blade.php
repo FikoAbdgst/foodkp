@@ -78,7 +78,7 @@
                             </div>
                         </div>
                         <div class="main-hero-icon">
-                            <i class="bi bi-basket2-fill"></i>
+                            <img src={{ asset('images/logo.png') }} alt="logo" style="width: 50px; height: 50px;">
                         </div>
                     </div>
                 </div>
@@ -92,7 +92,7 @@
         <div class="container">
             <div class="section-header text-center mb-5" data-aos="fade-up">
                 <span class="section-subtitle">Keunggulan Kami</span>
-                <h2 class="section-title">Mengapa Memilih FoodKP?</h2>
+                <h2 class="section-title">Mengapa Memilih Lokomart?</h2>
                 <p class="section-description">Kami berkomitmen memberikan pengalaman terbaik untuk Anda</p>
             </div>
 
@@ -233,10 +233,10 @@
         <div class="container">
             <div class="footer-top">
                 <div class="row g-4">
-                    <div class="col-lg-4 col-md-6">
+                    <div class="col-lg-6 col-md-6">
                         <div class="footer-brand mb-4">
-                            <i class="bi bi-basket2-fill"></i>
-                            <span>FoodKP</span>
+                            <img src={{ asset('images/logo.png') }} alt="logo" style="width: 50px; height: 50px;">
+                            <span>Lokomart</span>
                         </div>
                         <p class="footer-description">
                             Solusi praktis untuk kebutuhan makanan Anda. Pesan dengan mudah, nikmati dengan senang hati.
@@ -257,40 +257,23 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-2 col-md-6">
-                        <h5 class="footer-heading">Perusahaan</h5>
-                        <ul class="footer-links">
-                            <li><a href="#">Tentang Kami</a></li>
-                            <li><a href="#mengapa-kami">Mengapa Kami</a></li>
-                            <li><a href="#">Karir</a></li>
-                            <li><a href="#">Blog</a></li>
-                        </ul>
-                    </div>
 
-                    <div class="col-lg-2 col-md-6">
-                        <h5 class="footer-heading">Menu</h5>
-                        <ul class="footer-links">
-                            <li><a href="#rekomendasi">Menu Populer</a></li>
-                            <li><a href="{{ route('login') }}">Semua Menu</a></li>
-                            <li><a href="#">Promo</a></li>
-                            <li><a href="#">Kategori</a></li>
-                        </ul>
-                    </div>
 
-                    <div class="col-lg-4 col-md-6">
+                    <div class="col-lg-6 col-md-6">
                         <h5 class="footer-heading">Hubungi Kami</h5>
                         <ul class="footer-contact">
                             <li>
                                 <i class="bi bi-geo-alt-fill"></i>
-                                <span>Jl. Contoh No. 123, Bandung</span>
+                                <span>Perum Permata Padalarang D No.22 Desa Jayamekar, Kec Padalarang, Kab Bandung
+                                    Barat</span>
                             </li>
                             <li>
                                 <i class="bi bi-envelope-fill"></i>
-                                <span>info@foodkp.com</span>
+                                <span>lokomart23@gmail.com</span>
                             </li>
                             <li>
                                 <i class="bi bi-phone-fill"></i>
-                                <span>+62 812-3456-789</span>
+                                <span>+62 878-2521-1141</span>
                             </li>
                         </ul>
                     </div>
@@ -298,7 +281,7 @@
             </div>
 
             <div class="footer-bottom">
-                <p>&copy; 2026 FoodKP Development. All Rights Reserved.</p>
+                <p>&copy;2026 Lokomart Development. All Rights Reserved.</p>
             </div>
         </div>
     </footer>

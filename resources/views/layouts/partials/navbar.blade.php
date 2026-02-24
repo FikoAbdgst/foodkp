@@ -1,8 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top navbar-custom">
     <div class="container">
         <a class="navbar-brand brand-custom" href="{{ url('/') }}">
-            <i class="bi bi-basket2-fill brand-icon"></i>
-            <span class="brand-text">FoodKP</span>
+            <img src={{ asset('images/logo.png') }} alt="logo" style="width: 50px; height: 50px;">
+            <span class="brand-text">Lokomart</span>
         </a>
 
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"

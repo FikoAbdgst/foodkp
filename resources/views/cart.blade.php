@@ -233,7 +233,8 @@
                                         <i class="bi bi-shop"></i>
                                     </div>
                                     <h6>Lokasi Outlet Kami</h6>
-                                    <p class="outlet-address">Jl. Contoh No. 123, Kota Bandung</p>
+                                    <p class="outlet-address">Perum Permata Padalarang D No.22 Desa Jayamekar, Kec
+                                        Padalarang, Kab Bandung Barat</p>
                                     <a href="https://maps.app.goo.gl/g7HWJ3d1omMd3bZn9?g_st=ic" target="_blank"
                                         class="btn-map">
                                         <i class="bi bi-map me-2"></i>Lihat di Google Maps
