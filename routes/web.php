@@ -7,12 +7,12 @@ use App\Models\Food;
 
 
 Route::get('/', function () {
-    $foods = Food::latest()->take(8)->get();
+    $foods = Food::orderBy('terjual', 'desc')->take(6)->get();
     return view('home_guest', compact('foods'));
 })->name('home.guest');
 
 Route::get('/home', function () {
-    $foods = Food::latest()->take(8)->get();
+    $foods = Food::latest()->take(9)->get();
     return view('home_user', compact('foods'));
 })->middleware('auth')->name('home.user');
 

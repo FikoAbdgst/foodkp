@@ -981,7 +981,11 @@
         .social-link:hover {
             background: var(--primary);
             transform: translateY(-4px);
-            color: var(--white);
+            color: var(--white) !important;
+        }
+
+        .social-link:hover i {
+            color: var(--white) !important;
         }
 
         .footer-heading {
