@@ -9,7 +9,6 @@ class Food extends Model
 {
     use HasFactory;
 
-    // Tambahkan baris ini untuk menegaskan nama tabel di database
     protected $table = 'foods';
 
     protected $fillable = [
@@ -18,5 +17,16 @@ class Food extends Model
         'harga',
         'stok',
         'terjual',
+        'masa_tahan_hari', // Field baru
+        'is_expired',      // Field baru
     ];
+
+    // Fungsi pembantu untuk memunculkan catatan info
+    public function getCatatanExpiredAttribute()
+    {
+        if ($this->masa_tahan_hari) {
+            return "Catatan: Makanan ini hanya tahan " . $this->masa_tahan_hari . " hari sejak diinput.";
+        }
+        return "Tahan lama (Tidak ada catatan kedaluwarsa)";
+    }
 }

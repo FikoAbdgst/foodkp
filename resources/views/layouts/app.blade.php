@@ -229,6 +229,28 @@
             </main>
         @endauth
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Melakukan request AJAX secara diam-diam di background
+            fetch('{{ route('foods.check_expired') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message);
+                    // Opsional: Jika ada data yang terupdate, Anda bisa me-refresh halaman otomatis
+                    // if (data.message.includes('1 makanan') || data.message.includes('2 makanan')) { // dst
+                    //     location.reload();
+                    // }
+                })
+                .catch(error => console.error('Gagal mengecek kedaluwarsa:', error));
+        });
+    </script>
 </body>
 
 </html>

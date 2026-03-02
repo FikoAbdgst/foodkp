@@ -12,7 +12,14 @@ class FoodController extends Controller
     public function index()
     {
         $foods = Food::all();
-        return view('admin.foods.index', compact('foods'));
+
+        // Memfilter makanan yang status is_expired-nya bernilai true
+        // (Berlaku baik Anda menggunakan Opsi 1 (Dinamis Model) maupun Opsi 2 (AJAX DB))
+        $expiredFoods = $foods->filter(function ($food) {
+            return $food->is_expired;
+        });
+
+        return view('admin.foods.index', compact('foods', 'expiredFoods'));
     }
 
     // app/Http/Controllers/Admin/FoodController.php
@@ -40,7 +47,8 @@ class FoodController extends Controller
             'nama_makanan' => 'required',
             'harga' => 'required|numeric',
             'stok' => 'required|integer',
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048'
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'masa_tahan_hari' => 'nullable|integer|min:1' // Validasi tambahan
         ]);
 
         $imagePath = $request->file('image')->store('foods', 'public');
@@ -49,7 +57,8 @@ class FoodController extends Controller
             'nama_makanan' => $request->nama_makanan,
             'harga' => $request->harga,
             'stok' => $request->stok,
-            'image' => $imagePath
+            'image' => $imagePath,
+            'masa_tahan_hari' => $request->masa_tahan_hari // Simpan ke database
         ]);
 
         return redirect()->route('foods.index')->with('success', 'Makanan berhasil ditambah!');
@@ -67,12 +76,16 @@ class FoodController extends Controller
             'harga' => 'required|numeric',
             'stok' => 'required|integer',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'masa_tahan_hari' => 'nullable|integer|min:1', // Tambahkan validasi ini
         ]);
 
         $data = $request->all();
 
         if ($request->hasFile('image')) {
-            // Logika hapus gambar lama bisa ditambahkan di sini
+            // Hapus gambar lama jika ada gambar baru yang diupload
+            if ($food->image) {
+                Storage::disk('public')->delete($food->image);
+            }
             $data['image'] = $request->file('image')->store('foods', 'public');
         }
 
@@ -110,5 +123,28 @@ class FoodController extends Controller
         ]);
 
         return back()->with('success', "Data penjualan {$food->nama_makanan} berhasil dicatat!");
+    }
+    public function checkExpired()
+    {
+        // Cari makanan yang belum expired dan punya masa_tahan_hari
+        $foods = Food::where('is_expired', false)
+            ->whereNotNull('masa_tahan_hari')
+            ->get();
+
+        $jumlahDiupdate = 0;
+
+        foreach ($foods as $food) {
+            $batasWaktu = $food->created_at->copy()->addDays($food->masa_tahan_hari);
+
+            if (now()->isAfter($batasWaktu)) {
+                $food->update(['is_expired' => true]);
+                $jumlahDiupdate++;
+            }
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => "Pengecekan selesai. {$jumlahDiupdate} makanan telah diubah menjadi kedaluwarsa."
+        ]);
     }
 }

@@ -165,6 +165,21 @@
                             @enderror
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            <i class="bi bi-clock-history"></i>Masa Tahan (Hari)
+                        </label>
+                        <input type="number" name="masa_tahan_hari"
+                            class="form-control @error('masa_tahan_hari') is-invalid @enderror"
+                            value="{{ old('masa_tahan_hari') }}" placeholder="Contoh: 1 (untuk tahan 1 hari)"
+                            min="1">
+                        <small class="input-hint">
+                            <i class="bi bi-info-circle me-1"></i>Kosongkan jika makanan tidak bisa basi.
+                        </small>
+                        @error('masa_tahan_hari')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
                     <div class="mb-4">
                         <label class="form-label">

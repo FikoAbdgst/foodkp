@@ -113,6 +113,9 @@
                 </a>
             </div>
         </div>
+        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#expiredHistoryModal">
+            <i class="bi bi-clock-history me-1"></i> Riwayat Kedaluwarsa
+        </button>
 
         <div class="table-card">
             @if ($foods->count() > 0)
@@ -150,6 +153,13 @@
                                             @else stock-high @endif">
                                             {{ $food->stok }} unit
                                         </span>
+                                        @if ($food->masa_tahan_hari)
+                                            <span class="badge bg-info">{{ $food->catatan_expired }}</span>
+                                        @endif
+
+                                        @if ($food->is_expired)
+                                            <span class="badge bg-danger">MAKANAN INI KEDALUWARSA!</span>
+                                        @endif
                                     </td>
                                     <td class="text-center">
                                         <a href="{{ route('foods.edit', $food->id) }}"
@@ -184,3 +194,113 @@
         </div>
     </div>
 @endsection
+
+<div class="modal fade" id="expiredHistoryModal" tabindex="-1" aria-labelledby="expiredHistoryModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title fw-bold text-dark" id="expiredHistoryModalLabel">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Riwayat Makanan Kedaluwarsa
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                            <input type="text" id="searchExpired" class="form-control"
+                                placeholder="Cari nama makanan kedaluwarsa...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-light text-center">
+                            <tr>
+                                <th>No</th>
+                                <th>Foto</th>
+                                <th>Nama Makanan</th>
+                                <th>Tgl Dibuat</th>
+                                <th>Masa Tahan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expiredTableBody">
+                            @forelse($expiredFoods as $index => $item)
+                                <tr class="expired-row">
+                                    <td class="text-center">{{ $loop->iteration }}</td>
+                                    <td class="text-center">
+                                        @if ($item->image)
+                                            <img src="{{ asset('storage/' . $item->image) }}" alt="Foto"
+                                                width="50" class="rounded">
+                                        @else
+                                            <span class="text-muted small">No Image</span>
+                                        @endif
+                                    </td>
+                                    <td class="food-name fw-bold">{{ $item->nama_makanan }}</td>
+                                    <td class="text-center">{{ $item->created_at->format('d M Y') }}</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-danger">{{ $item->masa_tahan_hari }} Hari</span>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr id="emptyRow">
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        <i class="bi bi-check-circle text-success fs-4 d-block mb-2"></i>
+                                        Belum ada riwayat makanan kedaluwarsa.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchExpired');
+        const rows = document.querySelectorAll('.expired-row');
+
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+                let hasVisibleRow = false;
+
+                rows.forEach(row => {
+                    // Kita mencari berdasarkan class 'food-name'
+                    const foodName = row.querySelector('.food-name').textContent.toLowerCase();
+
+                    if (foodName.includes(searchTerm)) {
+                        row.style.display = '';
+                        hasVisibleRow = true;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                // Tampilkan pesan kosong jika pencarian tidak ditemukan (opsional)
+                const emptyMsg = document.getElementById('emptySearchMsg');
+                if (!hasVisibleRow && rows.length > 0) {
+                    if (!emptyMsg) {
+                        const tr = document.createElement('tr');
+                        tr.id = 'emptySearchMsg';
+                        tr.innerHTML =
+                            '<td colspan="5" class="text-center text-muted py-3">Pencarian tidak ditemukan.</td>';
+                        document.getElementById('expiredTableBody').appendChild(tr);
+                    }
+                } else if (emptyMsg) {
+                    emptyMsg.remove();
+                }
+            });
+        }
+    });
+</script>

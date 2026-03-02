@@ -145,7 +145,22 @@
                                 Stok"</strong> untuk mengupdate stok.
                         </div>
                     </div>
-
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="bi bi-clock-history me-1"></i>Masa Tahan (Hari)
+                        </label>
+                        <input type="number" name="masa_tahan_hari"
+                            class="form-control @error('masa_tahan_hari') is-invalid @enderror"
+                            value="{{ old('masa_tahan_hari', $food->masa_tahan_hari) }}"
+                            placeholder="Contoh: 1 (untuk tahan 1 hari)" min="1">
+                        <small class="text-muted d-block mt-2">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Kosongkan jika makanan tidak bisa basi.
+                        </small>
+                        @error('masa_tahan_hari')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
                     <div class="mb-4">
                         <label class="form-label">
                             <i class="bi bi-image me-1"></i>Foto Makanan
