@@ -76,7 +76,7 @@ class FoodController extends Controller
             'harga' => 'required|numeric',
             'stok' => 'required|integer',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'masa_tahan_hari' => 'nullable|integer|min:1', // Tambahkan validasi ini
+            'masa_tahan_hari' => 'nullable|integer|min:1', // Validasi ini sudah benar
         ]);
 
         $data = $request->all();
@@ -88,6 +88,18 @@ class FoodController extends Controller
             }
             $data['image'] = $request->file('image')->store('foods', 'public');
         }
+
+        // --- TAMBAHAN KODE BARU DI SINI ---
+        // Evaluasi ulang status expired jika masa tahan diubah
+        if (empty($request->masa_tahan_hari)) {
+            // Jika dikosongkan (makanan tidak bisa basi), kembalikan statusnya ke false
+            $data['is_expired'] = false;
+        } else {
+            // Cek ulang apakah dengan masa tahan yang baru, makanan ini masih expired atau belum
+            $batasWaktu = $food->created_at->copy()->addDays($request->masa_tahan_hari);
+            $data['is_expired'] = now()->isAfter($batasWaktu);
+        }
+        // ----------------------------------
 
         $food->update($data);
 
