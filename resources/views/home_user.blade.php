@@ -193,12 +193,27 @@
                             <div class="menu-card-body p-4 d-flex flex-column bg-white rounded-bottom-4">
                                 <h5 class="menu-card-title fw-bold text-dark mb-2">{{ $food->nama_makanan }}</h5>
 
-                                <div class="menu-card-info mb-3">
+                                <div class="menu-card-info mb-3 d-flex flex-wrap gap-2">
                                     <span
                                         class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
                                         <i class="bi bi-bag-check-fill me-1"></i>
                                         Terjual {{ $displayTerjual }}
                                     </span>
+
+                                    {{-- LOGIKA KEDALUWARSA --}}
+                                    @if ($food->masa_tahan_hari)
+                                        @php
+                                            // Menghitung tanggal kedaluwarsa: (tanggal dibuat + masa tahan hari)
+                                            $tglExpired = \Carbon\Carbon::parse($food->created_at)
+                                                ->addDays($food->masa_tahan_hari)
+                                                ->translatedFormat('d F Y');
+                                        @endphp
+                                        <span
+                                            class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-2 rounded-pill">
+                                            <i class="bi bi-clock-history me-1"></i>
+                                            Tahan s.d {{ $tglExpired }}
+                                        </span>
+                                    @endif
                                 </div>
 
                                 <div class="menu-card-price-row mt-auto mb-4">
@@ -267,6 +282,19 @@
 
                                     <p class="mb-2"><small class="text-muted">Stok Tersedia:</small> <strong
                                             class="stok-tersedia">{{ $food->stok }}</strong></p>
+                                    @if ($food->masa_tahan_hari)
+                                        @php
+                                            $tglExpired = \Carbon\Carbon::parse($food->created_at)
+                                                ->addDays($food->masa_tahan_hari)
+                                                ->translatedFormat('d F Y');
+                                        @endphp
+                                        <p class="mb-3 text-warning">
+                                            <small>
+                                                <i class="bi bi-info-circle-fill me-1"></i>
+                                                Masa tahan sampai tanggal <strong>{{ $tglExpired }}</strong>
+                                            </small>
+                                        </p>
+                                    @endif
 
                                     <form action="{{ route('cart.add', $food->id) }}" method="POST"
                                         id="formAddCart{{ $food->id }}">

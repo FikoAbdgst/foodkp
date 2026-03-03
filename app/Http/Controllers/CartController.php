@@ -22,6 +22,8 @@ class CartController extends Controller
                 // Jika makanan ada dan TIDAK EXPIRED, baru biarkan di keranjang
                 if ($food && !$food->is_expired) {
                     $item['stok'] = $food->stok;
+                    $item['masa_tahan_hari'] = $food->masa_tahan_hari; // Tambahan
+                    $item['created_at'] = $food->created_at;           // Tambahan
                     $updatedCart[$id] = $item;
                 }
             }
@@ -50,7 +52,9 @@ class CartController extends Controller
                 "quantity" => (int)$quantity,
                 "harga" => $food->harga,
                 "image" => $food->image,
-                "stok" => $food->stok // TAMBAHKAN INI agar saat pertama add tidak error di view
+                "stok" => $food->stok,
+                "masa_tahan_hari" => $food->masa_tahan_hari, // Tambahan
+                "created_at" => $food->created_at            // Tambahan
             ];
         }
 

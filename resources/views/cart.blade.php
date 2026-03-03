@@ -5,6 +5,7 @@
         <div class="container py-4 py-md-5">
             <div class="page-header mb-4 mb-md-5">
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+
                     <div>
                         <h1 class="page-title mb-1">Keranjang Belanja</h1>
                         <p class="text-muted mb-0">Periksa pesanan Anda sebelum checkout</p>
@@ -50,9 +51,23 @@
                                         <div class="item-details">
                                             <h5 class="item-name">{{ $item['nama_makanan'] ?? 'Menu Tidak Diketahui' }}</h5>
                                             <p class="item-price">Rp{{ number_format($itemHarga, 0, ',', '.') }}</p>
-                                            <span class="stock-badge">
-                                                <i class="bi bi-box-seam"></i> Stok: {{ $item['stok'] ?? 0 }}
-                                            </span>
+                                            <div class="d-flex flex-wrap gap-2 mt-1">
+                                                <span class="stock-badge">
+                                                    <i class="bi bi-box-seam"></i> Stok: {{ $item['stok'] ?? 0 }}
+                                                </span>
+
+                                                {{-- LOGIKA KEDALUWARSA DI KERANJANG --}}
+                                                @if (isset($item['masa_tahan_hari']) && $item['masa_tahan_hari'])
+                                                    @php
+                                                        $tglExpiredCart = \Carbon\Carbon::parse($item['created_at'])
+                                                            ->addDays($item['masa_tahan_hari'])
+                                                            ->translatedFormat('d F Y');
+                                                    @endphp
+                                                    <span class="stock-badge" style="background: #fff3cd; color: #856404;">
+                                                        <i class="bi bi-clock-history"></i> Tahan s.d {{ $tglExpiredCart }}
+                                                    </span>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
 
@@ -277,7 +292,18 @@
                 <form action="{{ route('preorder.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
-
+                        <div class="alert alert-info border-info-subtle shadow-sm d-flex align-items-start mt-3 mb-4"
+                            role="alert">
+                            <i class="bi bi-info-circle-fill fs-4 me-3 text-info"></i>
+                            <div>
+                                <h6 class="alert-heading fw-bold mb-1">Informasi Pembayaran Pre-Order</h6>
+                                <p class="mb-0 text-sm">
+                                    Untuk memproses pesanan Pre-Order, Anda cukup mentransfer <strong>Down Payment (DP)
+                                        minimal sebesar 50%</strong> dari total harga. Sisa pelunasan dapat dibayarkan nanti
+                                    saat pesanan siap diambil atau dikirim.
+                                </p>
+                            </div>
+                        </div>
                         <div id="step-1">
                             <h6 class="fw-bold mb-3 border-bottom pb-2">Langkah 1: Pilih Menu & Detail</h6>
 
@@ -363,12 +389,11 @@
                                     <option value="" selected disabled>-- Pilih Metode --</option>
                                     <option value="qris">QRIS</option>
                                     <option value="bca">Transfer BCA</option>
-                                    <option value="bri">Transfer BRI</option>
                                 </select>
                             </div>
 
                             <div id="info-qris" class="payment-info d-none text-center mb-3">
-                                <img src="{{ asset('images/qris-dummy.png') }}" alt="QRIS" class="img-fluid"
+                                <img src="{{ asset('images/dana.png') }}" alt="QRIS" class="img-fluid"
                                     style="max-height: 250px;">
                                 <p class="text-muted mt-2">Scan QR code di atas menggunakan aplikasi e-wallet / M-Banking
                                     Anda.</p>
@@ -377,8 +402,8 @@
                             <div id="info-bank" class="payment-info d-none mb-3">
                                 <div class="card card-body bg-light text-center border-0">
                                     <h5 class="fw-bold mb-1" id="bank-name">BANK</h5>
-                                    <h3 class="text-primary mb-1" id="bank-account">1234-5678-90</h3>
-                                    <p class="mb-0">a.n Kantin Mardira</p>
+                                    <h3 class="text-primary mb-1" id="bank-account">0630111145</h3>
+                                    <p class="mb-0">a.n Lokomart</p>
                                 </div>
                             </div>
 

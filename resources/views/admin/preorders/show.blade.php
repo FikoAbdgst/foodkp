@@ -2,8 +2,14 @@
 
 @section('content')
     <div class="container py-4">
-        <a href="{{ route('admin.preorders.index') }}" class="btn btn-sm btn-secondary mb-3"><i class="bi bi-arrow-left"></i>
-            Kembali ke Daftar</a>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a href="{{ route('admin.preorders.index') }}" class="btn btn-sm btn-secondary">
+                <i class="bi bi-arrow-left"></i> Kembali ke Daftar
+            </a>
+            <a href="{{ route('admin.preorders.print', $preOrder->id) }}" target="_blank" class="btn btn-sm btn-primary">
+                <i class="bi bi-printer"></i> Cetak Struk
+            </a>
+        </div>
 
         <h3 class="fw-bold mb-4">Detail Pesanan #PO-{{ str_pad($preOrder->id, 4, '0', STR_PAD_LEFT) }}</h3>
 

@@ -162,8 +162,8 @@
                 <div class="wrapper">
                     <nav id="sidebar">
                         <div class="sidebar-header">
-                            <h3><i class="bi bi-shop"></i> Admin Panel</h3>
-                            <p>Food Management System</p>
+                            <h3><i class="bi bi-shop"></i> Lokomart</h3>
+                            <p>Admin Panel</p>
                         </div>
 
                         <div class="sidebar-menu">

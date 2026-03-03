@@ -102,7 +102,7 @@
                             <div class="menu-card-body">
                                 <h5 class="menu-card-title">{{ $food->nama_makanan }}</h5>
 
-                                <div class="menu-card-info mb-3">
+                                <div class="menu-card-info mb-3 d-flex flex-wrap gap-2">
                                     @if ($isHabis)
                                         <span class="badge bg-danger shadow-sm">
                                             <i class="bi bi-x-circle me-1"></i> Stok Habis
@@ -114,6 +114,19 @@
                                     @elseif ($isPopuler)
                                         <span class="badge-popular">
                                             <i class="bi bi-fire text-danger"></i> Populer
+                                        </span>
+                                    @endif
+
+                                    {{-- LOGIKA KEDALUWARSA --}}
+                                    @if ($food->masa_tahan_hari)
+                                        @php
+                                            $tglExpired = \Carbon\Carbon::parse($food->created_at)
+                                                ->addDays($food->masa_tahan_hari)
+                                                ->translatedFormat('d F Y');
+                                        @endphp
+                                        <span
+                                            class="badge bg-warning-subtle text-warning border border-warning-subtle shadow-sm px-2 py-1">
+                                            <i class="bi bi-clock-history"></i> Tahan s.d {{ $tglExpired }}
                                         </span>
                                     @endif
                                 </div>
@@ -177,6 +190,19 @@
                                     <p><strong>Stok Tersedia:</strong> <span
                                             class="stok-tersedia">{{ $food->stok }}</span>
                                     </p>
+                                    @if ($food->masa_tahan_hari)
+                                        @php
+                                            $tglExpiredModal = \Carbon\Carbon::parse($food->created_at)
+                                                ->addDays($food->masa_tahan_hari)
+                                                ->translatedFormat('d F Y');
+                                        @endphp
+                                        <p class="mb-3 text-warning">
+                                            <small>
+                                                <i class="bi bi-info-circle-fill me-1"></i>
+                                                Masa tahan sampai tanggal <strong>{{ $tglExpiredModal }}</strong>
+                                            </small>
+                                        </p>
+                                    @endif
 
                                     <form action="{{ route('cart.add', $food->id) }}" method="POST"
                                         id="formAddCart{{ $food->id }}">

@@ -46,6 +46,7 @@ Route::middleware(['auth'])->group(function () {
         // TAMBAHKAN ROUTE ADMIN UNTUK MANAJEMEN PRE-ORDER DISINI
         Route::get('/admin/preorders', [App\Http\Controllers\Admin\PreOrderController::class, 'index'])->name('admin.preorders.index');
         Route::get('/admin/preorders/{id}', [App\Http\Controllers\Admin\PreOrderController::class, 'show'])->name('admin.preorders.show');
+        Route::get('/admin/preorders/{id}/print', [App\Http\Controllers\Admin\PreOrderController::class, 'print'])->name('admin.preorders.print');
         Route::patch('/admin/preorders/{id}/status', [App\Http\Controllers\Admin\PreOrderController::class, 'updateStatus'])->name('admin.preorders.update_status');
     });
 });

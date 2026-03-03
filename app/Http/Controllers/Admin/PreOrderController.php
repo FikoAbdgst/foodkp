@@ -58,7 +58,7 @@ class PreOrderController extends Controller
 
         if ($request->status == 'accepted') {
             $pesan .= "Halo " . $preOrder->customer_name . ",\n\n";
-            $pesan .= "Kami dari Kantin Mardira. Kami ingin mengkonfirmasi pesanan Pre-Order Anda dengan rincian:\n";
+            $pesan .= "Kami dari Lokomart. Kami ingin mengkonfirmasi pesanan Pre-Order Anda dengan rincian:\n";
             foreach ($preOrder->items as $item) {
                 $pesan .= "- " . ($item->food->nama_makanan ?? 'Menu') . " (" . $item->quantity . " porsi)\n";
             }
@@ -66,7 +66,7 @@ class PreOrderController extends Controller
             $pesan .= "Apakah benar ini pesanan Anda? Jika benar, pesanan Anda akan segera kami proses. Terima kasih!";
         } else if ($request->status == 'rejected') {
             $pesan .= "Halo " . $preOrder->customer_name . ",\n\n";
-            $pesan .= "Kami dari Kantin Mardira. Apakah Anda benar memesan pesanan Pre-Order sebesar *Rp " . number_format($preOrder->total_price, 0, ',', '.') . "*?\n\n";
+            $pesan .= "Kami dari Lokomart. Apakah Anda benar memesan pesanan Pre-Order sebesar *Rp " . number_format($preOrder->total_price, 0, ',', '.') . "*?\n\n";
             $pesan .= "Jika iya, mohon maaf ";
 
             if ($request->reject_reason == 'foto_kurang_jelas') {
@@ -85,5 +85,11 @@ class PreOrderController extends Controller
         return redirect()->back()
             ->with('success', 'Status pesanan berhasil diubah. Pesan WhatsApp telah disiapkan.')
             ->with('wa_link', $waLink);
+    }
+    public function print($id)
+    {
+        $preOrder = PreOrder::with(['user', 'items.food'])->findOrFail($id);
+
+        return view('admin.preorders.print', compact('preOrder'));
     }
 }
