@@ -16,23 +16,21 @@ Route::get('/home', function () {
     return view('home_user', compact('foods'));
 })->middleware('auth')->name('home.user');
 
-// Menu Routes
+// Menu Routes (Untuk User)
 Route::middleware(['auth'])->group(function () {
     Route::get('/menu', [MenuController::class, 'index'])->name('menu.all');
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/add-to-cart/{id}', [CartController::class, 'addToCart'])->name('cart.add');
     Route::patch('/update-cart', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/remove-from-cart', [CartController::class, 'remove'])->name('cart.remove');
-
-    // TAMBAHKAN ROUTE INI
     Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
-
     Route::post('/cart/checkout', [App\Http\Controllers\CartController::class, 'checkout'])->name('cart.checkout');
+
+    // PINDAHKAN ROUTE PO KESINI AGAR BISA DIAKSES USER
+    Route::post('/preorder', [App\Http\Controllers\CartController::class, 'storePreOrder'])->name('preorder.store');
 });
 
 Auth::routes();
-
-
 
 // Admin Routes
 Route::middleware(['auth'])->group(function () {
@@ -41,7 +39,11 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('admin/foods', App\Http\Controllers\Admin\FoodController::class);
         Route::get('admin/stok', [App\Http\Controllers\Admin\FoodController::class, 'stokIndex'])->name('stok.index');
         Route::patch('admin/stok/{food}/update', [App\Http\Controllers\Admin\FoodController::class, 'stokUpdate'])->name('stok.update');
-        Route::post('/admin/foods/check-expired', [FoodController::class, 'checkExpired'])->name('foods.check_expired');
-        Route::post('/preorder', [App\Http\Controllers\CartController::class, 'storePreOrder'])->name('preorder.store');
+        Route::post('/admin/foods/check-expired', [App\Http\Controllers\Admin\FoodController::class, 'checkExpired'])->name('foods.check_expired');
+
+        // TAMBAHKAN ROUTE ADMIN UNTUK MANAJEMEN PRE-ORDER DISINI
+        Route::get('/admin/preorders', [App\Http\Controllers\Admin\PreOrderController::class, 'index'])->name('admin.preorders.index');
+        Route::get('/admin/preorders/{id}', [App\Http\Controllers\Admin\PreOrderController::class, 'show'])->name('admin.preorders.show');
+        Route::patch('/admin/preorders/{id}/status', [App\Http\Controllers\Admin\PreOrderController::class, 'updateStatus'])->name('admin.preorders.update_status');
     });
 });

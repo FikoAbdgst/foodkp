@@ -12,4 +12,9 @@ class PreOrderItem extends Model
         'quantity',
         'price'
     ];
+
+    public function food()
+    {
+        return $this->belongsTo(Food::class, 'food_id');
+    }
 }

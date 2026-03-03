@@ -185,6 +185,12 @@
                                     <i class="bi bi-box-seam"></i> Kelola Stok
                                 </a>
                             </div>
+                            <div class="menu-item">
+                                <a href="{{ route('admin.preorders.index') }}"
+                                    class="{{ request()->routeIs('admin.preorders.*') ? 'active' : '' }}">
+                                    <i class="bi bi-card-checklist"></i> Data PO
+                                </a>
+                            </div>
                         </div>
 
                         <div class="sidebar-footer">
