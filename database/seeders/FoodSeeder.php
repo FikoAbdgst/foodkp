@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Food;
 use Illuminate\Database\Seeder;
-use Carbon\Carbon;
+use App\Models\Food;
 
 class FoodSeeder extends Seeder
 {
@@ -13,68 +12,112 @@ class FoodSeeder extends Seeder
      */
     public function run(): void
     {
+        // Kosongkan tabel foods terlebih dahulu jika diperlukan
+        // \Illuminate\Support\Facades\DB::table('foods')->truncate();
+
         $foods = [
-            // 1. Makanan baru diinput hari ini, masa tahan 1 hari (BELUM KEDALUWARSA)
             [
-                'nama_makanan' => 'Nasi Goreng Spesial',
-                'image' => 'foods/default.jpg', // Pastikan Anda memiliki gambar default atau sesuaikan path-nya
-                'harga' => 25000,
+                'nama_makanan' => 'Donat Salju',
+                'harga' => 3000,
                 'stok' => 50,
+                'terjual' => 15,
+                'masa_tahan_hari' => 2,
+                'is_expired' => false,
+                'image' => 'foods/default.jpg', // Pastikan Anda memiliki gambar default ini atau update via admin nanti
+            ],
+            [
+                'nama_makanan' => 'Risol',
+                'harga' => 2000,
+                'stok' => 40,
+                'terjual' => 20,
+                'masa_tahan_hari' => 1, // Gorengan biasanya enak dimakan di hari yang sama
+                'is_expired' => false,
+                'image' => 'foods/default.jpg',
+            ],
+            [
+                'nama_makanan' => 'Kue Putu',
+                'harga' => 1500,
+                'stok' => 30,
                 'terjual' => 10,
                 'masa_tahan_hari' => 1,
                 'is_expired' => false,
-                'created_at' => now(), // Dibuat saat seeder dijalankan
-            ],
-            // 2. Makanan diinput 3 hari yang lalu, masa tahan 2 hari (SUDAH KEDALUWARSA)
-            [
-                'nama_makanan' => 'Mie Bakso Urat',
                 'image' => 'foods/default.jpg',
-                'harga' => 20000,
-                'stok' => 30,
-                'terjual' => 5,
+            ],
+            [
+                'nama_makanan' => 'Bugis',
+                'harga' => 2000,
+                'stok' => 35,
+                'terjual' => 12,
                 'masa_tahan_hari' => 2,
-                'is_expired' => true, // Diset true karena umurnya 3 hari, padahal tahannya cuma 2 hari
-                'created_at' => now()->subDays(3), // Dibuat 3 hari yang lalu secara dinamis
-            ],
-            // 3. Makanan tidak bisa basi, diinput 30 hari yang lalu (TAHAN LAMA)
-            [
-                'nama_makanan' => 'Kerupuk Udang',
+                'is_expired' => false,
                 'image' => 'foods/default.jpg',
-                'harga' => 5000,
-                'stok' => 100,
+            ],
+            [
+                'nama_makanan' => 'Dadar Gulung',
+                'harga' => 1500,
+                'stok' => 45,
                 'terjual' => 25,
-                'masa_tahan_hari' => null, // Tidak bisa basi
-                'is_expired' => false,
-                'created_at' => now()->subDays(30), // Dibuat sebulan yang lalu
-            ],
-            // 4. Makanan diinput 2 hari yang lalu, masa tahan 1 hari (SUDAH KEDALUWARSA)
-            [
-                'nama_makanan' => 'Ayam Bakar Madu',
-                'image' => 'foods/default.jpg',
-                'harga' => 30000,
-                'stok' => 20,
-                'terjual' => 15,
                 'masa_tahan_hari' => 1,
-                'is_expired' => true,
-                'created_at' => now()->subDays(2),
-            ],
-            // 5. Makanan diinput 2 hari yang lalu, masa tahan 4 hari (BELUM KEDALUWARSA - Sisa 2 hari lagi)
-            [
-                'nama_makanan' => 'Minuman Es Teh Manis',
-                'image' => 'foods/default.jpg',
-                'harga' => 5000,
-                'stok' => 100,
-                'terjual' => 40,
-                'masa_tahan_hari' => 4,
                 'is_expired' => false,
-                'created_at' => now()->subDays(2),
+                'image' => 'foods/default.jpg',
+            ],
+            [
+                'nama_makanan' => 'Kue Lapis',
+                'harga' => 1500,
+                'stok' => 50,
+                'terjual' => 30,
+                'masa_tahan_hari' => 2,
+                'is_expired' => false,
+                'image' => 'foods/default.jpg',
+            ],
+            [
+                'nama_makanan' => 'Kue Putu Ayu',
+                'harga' => 2000,
+                'stok' => 40,
+                'terjual' => 18,
+                'masa_tahan_hari' => 2,
+                'is_expired' => false,
+                'image' => 'foods/default.jpg',
+            ],
+            [
+                'nama_makanan' => 'Nagasari',
+                'harga' => 2000,
+                'stok' => 30,
+                'terjual' => 8,
+                'masa_tahan_hari' => 2,
+                'is_expired' => false,
+                'image' => 'foods/default.jpg',
+            ],
+            [
+                'nama_makanan' => 'Ongol - Ongol',
+                'harga' => 2000,
+                'stok' => 25,
+                'terjual' => 5,
+                'masa_tahan_hari' => 1,
+                'is_expired' => false,
+                'image' => 'foods/default.jpg',
+            ],
+            [
+                'nama_makanan' => 'Kue Kukus',
+                'harga' => 2000,
+                'stok' => 40,
+                'terjual' => 22,
+                'masa_tahan_hari' => 3,
+                'is_expired' => false,
+                'image' => 'foods/default.jpg',
+            ],
+            [
+                'nama_makanan' => 'Lontong Isi',
+                'harga' => 4000,
+                'stok' => 60,
+                'terjual' => 45,
+                'masa_tahan_hari' => 2,
+                'is_expired' => false,
+                'image' => 'foods/default.jpg',
             ],
         ];
 
         foreach ($foods as $food) {
-            // Agar field updated_at juga menyesuaikan dengan created_at
-            $food['updated_at'] = $food['created_at'];
-
             Food::create($food);
         }
     }

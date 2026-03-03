@@ -42,6 +42,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('admin/stok', [App\Http\Controllers\Admin\FoodController::class, 'stokIndex'])->name('stok.index');
         Route::patch('admin/stok/{food}/update', [App\Http\Controllers\Admin\FoodController::class, 'stokUpdate'])->name('stok.update');
         Route::post('/admin/foods/check-expired', [App\Http\Controllers\Admin\FoodController::class, 'checkExpired'])->name('foods.check_expired');
+        Route::post('/foods/{food}/restock', [FoodController::class, 'storeRestock'])->name('admin.foods.restock');
 
         // TAMBAHKAN ROUTE ADMIN UNTUK MANAJEMEN PRE-ORDER DISINI
         Route::get('/admin/preorders', [App\Http\Controllers\Admin\PreOrderController::class, 'index'])->name('admin.preorders.index');
