@@ -42,5 +42,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('admin/stok', [App\Http\Controllers\Admin\FoodController::class, 'stokIndex'])->name('stok.index');
         Route::patch('admin/stok/{food}/update', [App\Http\Controllers\Admin\FoodController::class, 'stokUpdate'])->name('stok.update');
         Route::post('/admin/foods/check-expired', [FoodController::class, 'checkExpired'])->name('foods.check_expired');
+        Route::post('/preorder', [App\Http\Controllers\CartController::class, 'storePreOrder'])->name('preorder.store');
     });
 });

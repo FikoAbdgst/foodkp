@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class PreOrder extends Model
+{
+    protected $fillable = [
+        'user_id',
+        'customer_name',
+        'whatsapp',
+        'delivery_date',
+        'notes',
+        'payment_method',
+        'payment_proof',
+        'total_price',
+        'status'
+    ];
+}

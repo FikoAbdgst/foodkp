@@ -3,7 +3,6 @@
 @section('content')
     <div class="cart-page">
         <div class="container py-4 py-md-5">
-            <!-- Header -->
             <div class="page-header mb-4 mb-md-5">
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                     <div>
@@ -11,7 +10,12 @@
                         <p class="text-muted mb-0">Periksa pesanan Anda sebelum checkout</p>
                     </div>
 
-
+                    <div class="mb-4">
+                        <button type="button" class="btn btn-warning fw-bold shadow-sm" data-bs-toggle="modal"
+                            data-bs-target="#preOrderModal">
+                            <i class="fas fa-box-open"></i> Pre-Order (Pesanan Besar)
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -26,7 +30,6 @@
             @endif
 
             <div class="row g-3 g-lg-4">
-                <!-- Cart Items -->
                 <div class="col-lg-8">
                     <div class="cart-items-container">
                         @php $total = 0; @endphp
@@ -38,7 +41,6 @@
                             @endphp
                             <div class="cart-item-card" data-id="{{ $id }}">
                                 <div class="cart-item-content">
-                                    <!-- Image & Info -->
                                     <div class="item-info">
                                         <div class="item-image">
                                             <img src="{{ asset('storage/' . $item['image']) }}"
@@ -54,7 +56,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Quantity Controls -->
                                     <div class="quantity-controls">
                                         <label class="qty-label">Jumlah</label>
                                         <div class="qty-wrapper">
@@ -73,7 +74,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Subtotal & Delete -->
                                     <div class="item-actions">
                                         <div class="subtotal-wrapper">
                                             <span class="subtotal-label">Subtotal</span>
@@ -108,7 +108,6 @@
                     </div>
                 </div>
 
-                <!-- Order Summary -->
                 @if ($cart)
                     <div class="col-lg-4">
                         <div class="order-summary-card">
@@ -157,7 +156,6 @@
         </div>
     </div>
 
-    <!-- Checkout Modal -->
     <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content custom-modal">
@@ -170,7 +168,6 @@
                 <form action="{{ route('cart.checkout') }}" method="POST" id="checkoutForm">
                     @csrf
                     <div class="modal-body">
-                        <!-- Order Type Selection -->
                         <div class="order-type-selection mb-4">
                             <div class="row g-3">
                                 <div class="col-6">
@@ -198,7 +195,6 @@
                             </div>
                         </div>
 
-                        <!-- Delivery Section -->
                         <div id="deliverySection">
                             <div class="alert alert-warning border-0 shadow-sm d-flex align-items-start mb-3"
                                 role="alert">
@@ -238,7 +234,6 @@
                             <input type="hidden" name="longitude" id="long">
                         </div>
 
-                        <!-- Takeaway Section -->
                         <div id="takeawaySection" style="display: none;">
                             <div class="takeaway-info">
                                 <div class="outlet-card">
@@ -265,6 +260,143 @@
                         <button type="submit" class="btn-submit-order">
                             <i class="bi bi-whatsapp me-2"></i>Pesan Sekarang
                         </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="preOrderModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title">Form Pre-Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form action="{{ route('preorder.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-body">
+
+                        <div id="step-1">
+                            <h6 class="fw-bold mb-3 border-bottom pb-2">Langkah 1: Pilih Menu & Detail</h6>
+
+                            <div class="mb-3">
+                                <label class="form-label">Tanggal Pengiriman <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" name="delivery_date"
+                                    id="delivery_date" required>
+                                <small class="text-muted">Pemesanan minimal H-2.</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Pilih Menu (Klik untuk menambah) <span
+                                        class="text-danger">*</span></label>
+
+                                <div class="po-menu-grid">
+                                    @foreach ($foods as $food)
+                                        <div class="po-menu-card"
+                                            onclick="addFoodToPO({{ $food->id }}, '{{ addslashes($food->nama_makanan) }}', {{ $food->harga }}, '{{ asset('storage/' . $food->image) }}')">
+                                            <img src="{{ asset('storage/' . $food->image) }}"
+                                                alt="{{ $food->nama_makanan }}">
+                                            <div class="po-menu-info">
+                                                <h6>{{ $food->nama_makanan }}</h6>
+                                                <p>Rp {{ number_format($food->harga, 0, ',', '.') }}</p>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Daftar Pesanan Anda:</label>
+                                <div id="selected-po-items" class="alert alert-secondary mb-2" style="display: none;">
+                                </div>
+                                <div id="empty-po-message"
+                                    class="text-center text-muted p-3 border border-dashed rounded">
+                                    Belum ada menu yang dipilih. Klik menu di atas.
+                                </div>
+
+                                <div id="hidden-inputs-container"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Catatan</label>
+                                <textarea class="form-control" name="notes" rows="2" placeholder="Contoh: Pisah sambal, box warna merah..."></textarea>
+                            </div>
+
+                            <div
+                                class="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded border">
+                                <span class="fw-bold">Total Estimasi:</span>
+                                <h4 class="text-primary mb-0" id="po-total-price">Rp 0</h4>
+                            </div>
+
+                            <div class="text-end">
+                                <button type="button" class="btn btn-primary" id="btn-next" disabled>Lanjut Pembayaran
+                                    <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+
+                        <div id="step-2" class="d-none">
+                            <h6 class="fw-bold mb-3 border-bottom pb-2">Langkah 2: Informasi & Pembayaran</h6>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Nama Pemesan</label>
+                                    <input type="text" class="form-control" name="customer_name"
+                                        value="{{ Auth::user()->name ?? '' }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">No WhatsApp Aktif</label>
+                                    <input type="text" class="form-control" name="whatsapp" placeholder="08xxxx"
+                                        required>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-info">
+                                Pastikan Anda sudah menghitung total pesanan Anda. Silakan lakukan pembayaran ke salah satu
+                                metode di bawah ini.
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Metode Pembayaran</label>
+                                <select class="form-select" name="payment_method" id="payment_method" required>
+                                    <option value="" selected disabled>-- Pilih Metode --</option>
+                                    <option value="qris">QRIS</option>
+                                    <option value="bca">Transfer BCA</option>
+                                    <option value="bri">Transfer BRI</option>
+                                </select>
+                            </div>
+
+                            <div id="info-qris" class="payment-info d-none text-center mb-3">
+                                <img src="{{ asset('images/qris-dummy.png') }}" alt="QRIS" class="img-fluid"
+                                    style="max-height: 250px;">
+                                <p class="text-muted mt-2">Scan QR code di atas menggunakan aplikasi e-wallet / M-Banking
+                                    Anda.</p>
+                            </div>
+
+                            <div id="info-bank" class="payment-info d-none mb-3">
+                                <div class="card card-body bg-light text-center border-0">
+                                    <h5 class="fw-bold mb-1" id="bank-name">BANK</h5>
+                                    <h3 class="text-primary mb-1" id="bank-account">1234-5678-90</h3>
+                                    <p class="mb-0">a.n Kantin Mardira</p>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Upload Bukti Transfer <span class="text-danger">*</span></label>
+                                <input type="file" class="form-control" name="payment_proof"
+                                    accept="image/jpeg,image/png,image/jpg" required>
+                                <small class="text-muted">Format: JPG, JPEG, PNG.</small>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-secondary" id="btn-prev"><i
+                                        class="fas fa-arrow-left"></i> Kembali</button>
+                                <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Kirim &
+                                    Tunggu Acc</button>
+                            </div>
+                        </div>
+
                     </div>
                 </form>
             </div>
@@ -1045,17 +1177,260 @@
                 width: 100%;
             }
         }
+
+        /* Styling untuk Grid Makanan PO */
+        .po-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+            padding: 5px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: var(--light-gray);
+        }
+
+        .po-menu-card {
+            background: white;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .po-menu-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .po-menu-card img {
+            width: 100%;
+            height: 90px;
+            object-fit: cover;
+        }
+
+        .po-menu-info {
+            padding: 8px;
+            text-align: center;
+        }
+
+        .po-menu-info h6 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .po-menu-info p {
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin: 0;
+        }
+
+        /* Item List yang terpilih */
+        .selected-po-item {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .selected-po-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 4px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .selected-po-details {
+            flex: 1;
+        }
+
+        .selected-po-details h6 {
+            margin: 0;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .selected-po-details p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .selected-po-qty {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .selected-po-qty input {
+            width: 60px;
+            text-align: center;
+        }
     </style>
 
     <script>
+        // State untuk menyimpan item PO yang dipilih
+        let selectedPOItems = {};
+
+        function addFoodToPO(id, name, price, imageSrc) {
+            if (selectedPOItems[id]) {
+                alert('Menu sudah ada di daftar. Silakan ubah jumlahnya.');
+                return;
+            }
+
+            selectedPOItems[id] = {
+                id: id,
+                name: name,
+                price: price,
+                image: imageSrc,
+                qty: 10 // Default minimal 10
+            };
+
+            renderPOItems();
+        }
+
+        function removeFoodFromPO(id) {
+            delete selectedPOItems[id];
+            renderPOItems();
+        }
+
+        function updatePOQty(id, newQty) {
+            if (newQty < 10) {
+                alert("Minimal Pre-Order adalah 10 porsi");
+                selectedPOItems[id].qty = 10;
+            } else {
+                selectedPOItems[id].qty = parseInt(newQty);
+            }
+            renderPOItems();
+        }
+
+        function renderPOItems() {
+            const container = document.getElementById('selected-po-items');
+            const emptyMsg = document.getElementById('empty-po-message');
+            const hiddenInputs = document.getElementById('hidden-inputs-container');
+            const btnNext = document.getElementById('btn-next');
+            const totalPriceEl = document.getElementById('po-total-price');
+
+            container.innerHTML = '';
+            hiddenInputs.innerHTML = '';
+            let totalEstimasi = 0;
+            let itemCount = Object.keys(selectedPOItems).length;
+
+            if (itemCount === 0) {
+                container.style.display = 'none';
+                emptyMsg.style.display = 'block';
+                btnNext.disabled = true;
+                totalPriceEl.innerText = 'Rp 0';
+                return;
+            }
+
+            container.style.display = 'block';
+            emptyMsg.style.display = 'none';
+            btnNext.disabled = false;
+
+            for (const key in selectedPOItems) {
+                const item = selectedPOItems[key];
+                const subtotal = item.price * item.qty;
+                totalEstimasi += subtotal;
+
+                // Render UI HTML
+                const itemHTML = `
+                    <div class="selected-po-item">
+                        <img src="${item.image}" alt="${item.name}">
+                        <div class="selected-po-details">
+                            <h6>${item.name}</h6>
+                            <p>Rp ${new Intl.NumberFormat('id-ID').format(item.price)}</p>
+                        </div>
+                        <div class="selected-po-qty">
+                            <input type="number" class="form-control form-control-sm" value="${item.qty}" min="10" onchange="updatePOQty(${item.id}, this.value)">
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeFoodFromPO(${item.id})"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += itemHTML;
+
+                // Render Hidden Inputs untuk Form Submit ke Controller
+                hiddenInputs.innerHTML += `
+                    <input type="hidden" name="food_id[]" value="${item.id}">
+                    <input type="hidden" name="quantity[]" value="${item.qty}">
+                `;
+            }
+
+            totalPriceEl.innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalEstimasi);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            // Sync LocalStorage with Cart
+            // Logic Transisi Step 1 ke Step 2 (Pre Order Modal)
+            const step1 = document.getElementById('step-1');
+            const step2 = document.getElementById('step-2');
+            const btnNext = document.getElementById('btn-next');
+            const btnPrev = document.getElementById('btn-prev');
+
+            btnNext.addEventListener('click', function() {
+                if (!document.getElementById('delivery_date').value) {
+                    alert("Harap isi tanggal pengiriman!");
+                    return;
+                }
+                step1.classList.add('d-none');
+                step2.classList.remove('d-none');
+            });
+
+            btnPrev.addEventListener('click', function() {
+                step2.classList.add('d-none');
+                step1.classList.remove('d-none');
+            });
+
+            // Batasi Input Tanggal (Minimal H-2)
+            const deliveryDateInput = document.getElementById('delivery_date');
+            if (deliveryDateInput) {
+                let today = new Date();
+                today.setDate(today.getDate() + 2); // Tambah 2 hari
+                // Format ke YYYY-MM-DDTHH:MM
+                let minDateTime = today.toISOString().slice(0, 16);
+                deliveryDateInput.setAttribute('min', minDateTime);
+            }
+
+            // Logic Tampil QRIS / Nomor Rekening (Pre Order Modal)
+            const paymentMethod = document.getElementById('payment_method');
+            paymentMethod.addEventListener('change', function() {
+                document.querySelectorAll('.payment-info').forEach(el => el.classList.add('d-none'));
+
+                if (this.value === 'qris') {
+                    document.getElementById('info-qris').classList.remove('d-none');
+                } else if (this.value === 'bca' || this.value === 'bri') {
+                    const bankDiv = document.getElementById('info-bank');
+                    bankDiv.classList.remove('d-none');
+
+                    if (this.value === 'bca') {
+                        document.getElementById('bank-name').innerText = 'BCA';
+                        document.getElementById('bank-account').innerText = '0123-456-789';
+                    } else {
+                        document.getElementById('bank-name').innerText = 'BRI';
+                        document.getElementById('bank-account').innerText = '9876-543-210';
+                    }
+                }
+            });
+
+            // ==========================================
+            // LOGIC UNTUK KERANJANG REGULER (CART) BAWAAN
+            // ==========================================
+
             function syncLocalStorage(id, currentQty, maxStock) {
                 let remainingStock = parseInt(maxStock) - parseInt(currentQty);
                 if (remainingStock < 0) remainingStock = 0;
                 localStorage.setItem('stok_temp_' + id, remainingStock);
-                console.log(
-                    `Update Stok ID ${id}: Total ${maxStock} - Cart ${currentQty} = Sisa ${remainingStock}`);
             }
 
             // Manual Quantity Change
@@ -1111,7 +1486,7 @@
             });
         });
 
-        // Quantity Change Function
+        // Quantity Change Function (Cart Reguler)
         function changeQty(id, delta) {
             let input = document.getElementById('qty-' + id);
             let currentVal = parseInt(input.value);
@@ -1128,7 +1503,7 @@
             }
         }
 
-        // Update Cart in Real-time
+        // Update Cart in Real-time (Cart Reguler)
         function updateCartRealtime(id, quantity) {
             let row = document.querySelector(`.cart-item-card[data-id="${id}"]`);
 
@@ -1153,7 +1528,7 @@
                 .catch(err => console.error('Error:', err));
         }
 
-        // Order Type Toggle
+        // Order Type Toggle (Checkout Cart Reguler)
         const radioDelivery = document.getElementById('typeDelivery');
         const radioTakeaway = document.getElementById('typeTakeaway');
         const deliverySection = document.getElementById('deliverySection');
@@ -1172,8 +1547,10 @@
             }
         }
 
-        radioDelivery.addEventListener('change', toggleOrderType);
-        radioTakeaway.addEventListener('change', toggleOrderType);
+        if (radioDelivery && radioTakeaway) {
+            radioDelivery.addEventListener('change', toggleOrderType);
+            radioTakeaway.addEventListener('change', toggleOrderType);
+        }
 
         // Geolocation Functions
         function getLocation() {

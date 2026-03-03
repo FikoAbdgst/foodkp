@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Food;
+use App\Models\PreOrder;
+use App\Models\PreOrderItem;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
@@ -27,8 +30,6 @@ class CartController extends Controller
                     // Masukkan ke updatedCart
                     $updatedCart[$id] = $item;
                 }
-                // Jika $food tidak ditemukan (null), item tersebut TIDAK dimasukkan ke $updatedCart
-                // sehingga otomatis terhapus dari cart.
             }
 
             // Timpa session cart dengan data yang sudah diverifikasi
@@ -36,7 +37,13 @@ class CartController extends Controller
             $cart = $updatedCart;
         }
 
-        return view('cart', compact('cart'));
+        // --- TAMBAHKAN BARIS INI ---
+        // Ambil semua data makanan untuk modal pre-order
+        $foods = Food::all();
+
+        // --- UBAH BARIS INI ---
+        // Kirimkan variabel $cart DAN $foods ke view
+        return view('cart', compact('cart', 'foods'));
     }
     public function addToCart(Request $request, $id)
     {
@@ -150,5 +157,62 @@ class CartController extends Controller
         session()->forget('cart');
 
         return redirect()->back()->with('success', 'Keranjang berhasil dikosongkan!');
+    }
+    // app/Http/Controllers/CartController.php
+
+
+    public function storePreOrder(Request $request)
+    {
+        // 1. Validasi Input
+        $request->validate([
+            'delivery_date' => 'required|date',
+            'food_id' => 'required|array',
+            'quantity' => 'required|array',
+            'customer_name' => 'required|string',
+            'whatsapp' => 'required|string',
+            'payment_method' => 'required|string',
+            'payment_proof' => 'required|image|mimes:jpeg,png,jpg|max:2048' // Max 2MB
+        ]);
+
+        // 2. Upload Gambar Bukti Transfer
+        $proofPath = null;
+        if ($request->hasFile('payment_proof')) {
+            // Menyimpan di storage/app/public/payment_proofs
+            $proofPath = $request->file('payment_proof')->store('payment_proofs', 'public');
+        }
+
+        $totalPrice = 0;
+        foreach ($request->food_id as $index => $id) {
+            $food = Food::find($id);
+            if ($food) {
+                $totalPrice += ($food->harga * $request->quantity[$index]); // UBAH INI
+            }
+        }
+
+        $preOrder = PreOrder::create([
+            'user_id' => Auth::id(),
+            'customer_name' => $request->customer_name,
+            'whatsapp' => $request->whatsapp,
+            'delivery_date' => $request->delivery_date,
+            'notes' => $request->notes,
+            'payment_method' => $request->payment_method,
+            'payment_proof' => $proofPath, // Simpan path gambar
+            'total_price' => $totalPrice,
+            'status' => 'pending'
+        ]);
+
+        foreach ($request->food_id as $index => $id) {
+            $food = Food::find($id);
+            if ($food) {
+                PreOrderItem::create([
+                    'pre_order_id' => $preOrder->id,
+                    'food_id' => $id,
+                    'quantity' => $request->quantity[$index],
+                    'price' => $food->harga // UBAH INI
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Pesanan berhasil dikirim. Menunggu konfirmasi admin!');
     }
 }

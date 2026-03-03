@@ -96,7 +96,7 @@ class FoodController extends Controller
             $data['is_expired'] = false;
         } else {
             // Cek ulang apakah dengan masa tahan yang baru, makanan ini masih expired atau belum
-            $batasWaktu = $food->created_at->copy()->addDays($request->masa_tahan_hari);
+            $batasWaktu = $food->created_at->copy()->addDays((int) $request->masa_tahan_hari);
             $data['is_expired'] = now()->isAfter($batasWaktu);
         }
         // ----------------------------------
