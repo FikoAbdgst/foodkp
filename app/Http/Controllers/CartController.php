@@ -12,37 +12,28 @@ class CartController extends Controller
 {
     public function index()
     {
-        // Ambil session, default array kosong
         $cart = session()->get('cart', []);
-
-        // Gunakan variabel baru untuk menampung cart yang sudah dibersihkan
         $updatedCart = [];
 
         if (is_array($cart)) {
             foreach ($cart as $id => $item) {
                 $food = Food::find($id);
 
-                // Cek apakah makanannya masih ada di database?
-                if ($food) {
-                    // Update stok terbaru dari DB
+                // Jika makanan ada dan TIDAK EXPIRED, baru biarkan di keranjang
+                if ($food && !$food->is_expired) {
                     $item['stok'] = $food->stok;
-
-                    // Masukkan ke updatedCart
                     $updatedCart[$id] = $item;
                 }
             }
 
-            // Timpa session cart dengan data yang sudah diverifikasi
             session()->put('cart', $updatedCart);
             $cart = $updatedCart;
         }
 
-        // --- TAMBAHKAN BARIS INI ---
-        // Ambil semua data makanan untuk modal pre-order
-        $foods = Food::all();
-
         // --- UBAH BARIS INI ---
-        // Kirimkan variabel $cart DAN $foods ke view
+        // Ambil data makanan untuk modal pre-order yang BELUM EXPIRED saja
+        $foods = Food::where('is_expired', false)->get();
+
         return view('cart', compact('cart', 'foods'));
     }
     public function addToCart(Request $request, $id)
