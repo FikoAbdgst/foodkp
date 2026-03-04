@@ -159,19 +159,4 @@ class FoodController extends Controller
             'message' => "Pengecekan selesai. {$jumlahDiupdate} makanan telah diubah menjadi kedaluwarsa."
         ]);
     }
-    public function storeRestock(Request $request, Food $food)
-    {
-        $request->validate([
-            'quantity' => 'required|integer|min:1',
-            'expired_at' => 'required|date',
-        ]);
-
-        FoodRestock::create([
-            'food_id' => $food->id,
-            'quantity' => $request->quantity,
-            'expired_at' => $request->expired_at,
-        ]);
-
-        return redirect()->back()->with('success', 'Stok berhasil ditambahkan!');
-    }
 }
