@@ -26,10 +26,10 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/update-cart', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/remove-from-cart', [CartController::class, 'remove'])->name('cart.remove');
     Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
-    Route::post('/cart/checkout', [App\Http\Controllers\CartController::class, 'checkout'])->name('cart.checkout');
 
-    // PINDAHKAN ROUTE PO KESINI AGAR BISA DIAKSES USER
-    Route::post('/preorder', [App\Http\Controllers\CartController::class, 'storePreOrder'])->name('preorder.store');
+    // PERBAIKAN: Cukup gunakan CartController::class karena sudah di-import di atas
+    Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+    Route::post('/preorder', [CartController::class, 'storePreOrder'])->name('preorder.store');
 });
 
 Auth::routes();
