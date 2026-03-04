@@ -11,22 +11,22 @@ class Food extends Model
 
     protected $table = 'foods';
 
-    // Sesuaikan dengan field yang tersisa setelah stok & expired dipindah
     protected $fillable = [
         'nama_makanan',
         'image',
         'harga',
+        'stok',
+        'terjual',
+        'masa_tahan_hari', // Field baru
+        'is_expired',      // Field baru
     ];
 
-    // Relasi ke tabel restock
-    public function restocks()
+    // Fungsi pembantu untuk memunculkan catatan info
+    public function getCatatanExpiredAttribute()
     {
-        return $this->hasMany(FoodRestock::class);
-    }
-
-    // Accessor untuk mendapatkan total stok makanan saat ini
-    public function getStokAttribute()
-    {
-        return $this->restocks()->sum('quantity');
+        if ($this->masa_tahan_hari) {
+            return "Catatan: Makanan ini hanya tahan " . $this->masa_tahan_hari . " hari sejak diinput.";
+        }
+        return "Tahan lama (Tidak ada catatan kedaluwarsa)";
     }
 }
