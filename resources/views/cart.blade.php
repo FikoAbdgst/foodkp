@@ -393,7 +393,7 @@
                             </div>
 
                             <div id="info-qris" class="payment-info d-none text-center mb-3">
-                                <img src="{{ asset('images/dana.png') }}" alt="QRIS" class="img-fluid"
+                                <img src="{{ asset('images/image.png') }}" alt="QRIS" class="img-fluid"
                                     style="max-height: 250px;">
                                 <p class="text-muted mt-2">Scan QR code di atas menggunakan aplikasi e-wallet / M-Banking
                                     Anda.</p>
